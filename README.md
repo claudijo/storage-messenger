@@ -24,7 +24,7 @@ transport.trigger(event, [*args]);
 // Listen for events in another browser window
 transport.listen(event, callback, [context]);
 
-// Avoid polluting the global scope;
+// Avoid polluting the global scope
 var LocalCopyOfStorageMessenger = StorageMessenger.noConflict();
 ```
 
