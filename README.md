@@ -55,7 +55,7 @@ export SELENIUM_SERVER_JAR=~/java/selenium-server-standalone-2.37.0.jar \
 SELENIUM_BROWSER=firefox,chrome,safari &&  npm test
 ```
 
-Note that the popup blocker might need to be disabled manually to make the tests pass.
+Note that the browser's popup blocker might need to be disabled manually to make the tests pass.
 
 Technical Notes and Disclaimer
 ------------------------------
