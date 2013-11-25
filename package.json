@@ -1,0 +1,22 @@
+{
+  "name": "storage-messenger",
+  "description": "A micro library that utilizes HTML5 localStorage as transport mechanism for passing messages",
+  "version": "0.0.1",
+  "private": true,
+  "license" : "MIT",
+  "author": "Claudijo Borovic <claudijo.borovic@gmail.com>",
+  "repository": {
+    "type" : "git",
+    "url" : "http://github.com/claudijo/storage-messenger"
+  },
+  "devDependencies": {
+    "selenium-webdriver": "*",
+    "mocha": "*",
+    "expect.js": "*",
+    "sinon": "*",
+    "jsdoc": "*"
+  },
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha -R list --recursive test/integration/spec"
+  }
+}
