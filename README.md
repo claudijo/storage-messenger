@@ -48,7 +48,7 @@ The integration tests can be run without the standalone Selenium Server by downl
 
 `npm test`
 
-Other drivers (e.g. Firefox, Internet Explorer, and Safari), require the standalone Selenium server. To run the tests against multiple browsers, download the [Selenium server](https://code.google.com/p/selenium/downloads/list) and specify its location through the SELENIUM_SERVER_JAR environment variable. Use the SELENIUM_BROWSER environment variable to define a comma-separated list of browsers to test against. For example:
+Other drivers (e.g. Firefox, Internet Explorer, and Safari), require the standalone Selenium server. To run the tests against multiple browsers, download the [Selenium server](https://code.google.com/p/selenium/downloads/list) and specify its location through the `SELENIUM_SERVER_JAR` environment variable. Use the `SELENIUM_BROWSER` environment variable to define a comma-separated list of browsers to test against. For example:
 
 ```
 export SELENIUM_SERVER_JAR=~/java/selenium-server-standalone-2.37.0.jar \
