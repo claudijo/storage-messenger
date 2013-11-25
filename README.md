@@ -2,7 +2,7 @@ StorageMessenger.js
 ===================
 StorageMessenger.js is a micro library for JavaScript that utilizes HTML5 localStorage as transport mechanism for passing messages between browser windows with content loaded from the same domain.
 
-The lib runs in browsers that support Web Storage, including +IE8, Firefox, Chrome, Safari, Chrome, and Opera.
+The library runs in browsers that support Web Storage, including +IE8, Firefox, Chrome, Safari, Chrome, and Opera.
 
 Background
 ----------
@@ -42,15 +42,18 @@ Point your target browser to storage-messenger/test/unit/spec-runner.html.
 
 Integration Tests
 -----------------
-Integration tests are built on the JavaScript bindings for Selenium WebDriver. The supporting code for the integration test borrows from the WebDriverJS self tests, and are run in a similar way.
+Integration tests are built on the JavaScript bindings for Selenium WebDriver. The supporting code for the integration tests borrows from the WebDriverJS self tests, and are run in a similar way.
 
 The integration tests can be run without the standalone Selenium Server by downloading the [ChromeDriver](https://code.google.com/p/chromedriver/), which is natively supported by Selenium WebDriver. Make sure the executable is available on `PATH` and run the test as follows:
 
 `npm test`
 
-The other drivers (e.g. Firefox, Internet Explorer, and Safari), require the standalone Selenium server. To run the tests against multiple browsers, download the [Selenium server](https://code.google.com/p/selenium/downloads/list) and specify its location through the SELENIUM_SERVER_JAR environment variable. Use the SELENIUM_BROWSER environment variable to define a comma-separated list of browsers to test against. For example:
+Other drivers (e.g. Firefox, Internet Explorer, and Safari), require the standalone Selenium server. To run the tests against multiple browsers, download the [Selenium server](https://code.google.com/p/selenium/downloads/list) and specify its location through the SELENIUM_SERVER_JAR environment variable. Use the SELENIUM_BROWSER environment variable to define a comma-separated list of browsers to test against. For example:
 
-`export SELENIUM_SERVER_JAR=~/java/selenium-server-standalone-2.37.0.jar SELENIUM_BROWSER=firefox,chrome,safari &&  npm test`
+```
+export SELENIUM_SERVER_JAR=~/java/selenium-server-standalone-2.37.0.jar \
+SELENIUM_BROWSER=firefox,chrome,safari &&  npm test
+```
 
 Note that the popup blocker might need to be disabled manually to make the tests pass.
 
