@@ -29,16 +29,16 @@
     } else {
       event.returnValue = false;
     }
-  }
+  };
 
   if (window.addEventListener) {
     dom.listen = function(element, event, listener) {
       element.addEventListener(event, listener, false);
-    }
+    };
   } else {
     dom.listen = function(element, event, listener) {
       element.attachEvent('on' + event, listener);
-    }
+    };
   }
 
   transport.listen(STORAGE_TRANSPORT_EVENT_NAME, showReceivedMessage);

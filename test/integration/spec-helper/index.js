@@ -12,4 +12,4 @@ exports.getReceivedMessage = function(driver) {
 exports.getTransportMessageListenerKey = function(driver) {
   return driver.executeScript(
       'return window.transport._MESSAGE_LISTENER_KEY');
-}
+};

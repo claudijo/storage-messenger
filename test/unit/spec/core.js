@@ -15,7 +15,7 @@ describe('StorageMessenger', function () {
     mockListener = sinon.spy();
 
     sinon.spy(StorageMessenger, '_stringContains');
-  })
+  });
 
   afterEach(function() {
     StorageMessenger._stringContains.restore();
@@ -27,7 +27,7 @@ describe('StorageMessenger', function () {
 
   it('should gave correct message tag', function() {
     expect(StorageMessenger._MESSAGE_TAG).to
-        .be('b6297eba-31e4-11e3-8cf6-ce3f5508acd9')
+        .be('b6297eba-31e4-11e3-8cf6-ce3f5508acd9');
   });
 
   it('should have have correct listener tag', function() {
@@ -198,7 +198,7 @@ describe('StorageMessenger', function () {
         // Workaround for IE8 where attachEvent is not of function type, meaning
         // that Sinon will not be able to spy on it.
         previousAttachEvent = document.attachEvent;
-        document.attachEvent = function() {}
+        document.attachEvent = function() {};
 
         sinon.spy(document, 'attachEvent');
       }
@@ -249,7 +249,7 @@ describe('StorageMessenger', function () {
         // Workaround for IE8 where attachEvent is not of function type, meaning
         // that Sinon will not be able to spy on it.
         previousDetachEvent = document.detachEvent;
-        document.detachEvent = function() {}
+        document.detachEvent = function() {};
 
         sinon.spy(document, 'detachEvent');
       }

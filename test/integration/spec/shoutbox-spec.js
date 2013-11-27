@@ -1,5 +1,3 @@
-'use strict';
-
 var assert = require('selenium-webdriver/testing/assert'),
     test = require('../selenium-webdriver-extract/lib/test'),
     seleniumUtils = require('../selenium-webdriver-utils'),
@@ -7,6 +5,8 @@ var assert = require('selenium-webdriver/testing/assert'),
     Pages = test.Pages;
 
 test.suite(function(env) {
+  'use strict';
+
   var driver;
 
   var assertHasOwnStorageMessageListenerKeyInStorage = function() {

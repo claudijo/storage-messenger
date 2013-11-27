@@ -11,11 +11,11 @@ exports.openWindow = function(driver, url, name) {
 // implemented in WebDriverJS 2.37.0
 exports.getLocalStorageSize = function(driver) {
   return driver.executeScript('return window.localStorage.length');
-}
+};
 
 // Helper to get localStorage size, since driver.getLocalStorageItem() is not
 // implemented in WebDriverJS 2.37.0
 exports.getLocalStorageItem = function(driver ,key) {
   return driver.executeScript('return window.localStorage.getItem(arguments[0])',
       key);
-}
+};

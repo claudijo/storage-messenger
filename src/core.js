@@ -86,8 +86,8 @@
      * @private
      */
     _itemContainsMessageWithTargetId: function(item, targetId) {
-      return StorageMessenger._itemContainsMessage(item)
-          && StorageMessenger._itemContainsTargetId(item, targetId)
+      return StorageMessenger._itemContainsMessage(item) &&
+          StorageMessenger._itemContainsTargetId(item, targetId);
     },
 
     /**
@@ -172,27 +172,29 @@
   if (root.addEventListener) {
     StorageMessenger._addDomEventListener = function(target, type, listener) {
       target.addEventListener(type, listener, false);
-    }
+    };
+
     StorageMessenger._removeDomEventListener = function(target, type,
         listener) {
       target.removeEventListener(type, listener, false);
-    }
+    };
   } else if (root.attachEvent) {
     StorageMessenger._addDomEventListener = function(target, type, listener) {
-      if (type === 'storage' && target == root) {
+      if (type === 'storage' && target === root) {
         // Adding listeners for storage event has special treatment for IE8,
         // which fires the storage event on document, not window.
         target = document;
       }
       target.attachEvent('on' + type, listener);
-    }
+    };
+
     StorageMessenger._removeDomEventListener = function(target, type,
         listener) {
-      if (type === 'storage' && target == root) {
+      if (type === 'storage' && target === root) {
         target = document;
       }
       target.detachEvent('on' + type, listener);
-    }
+    };
   }
 
   /**
@@ -232,7 +234,7 @@
     store: function() {
       this._storage.setItem(this.toJson(), +new Date());
     }
-  }
+  };
 
   /**
    * Create a transport instance.
@@ -321,9 +323,9 @@
       var i = this._transportListeners.length;
       while(i--) {
         transportListener = this._transportListeners[i];
-        if (transportListener.event === event
-            && transportListener.listener === listener
-            && transportListener.context === context) {
+        if (transportListener.event === event &&
+            transportListener.listener === listener &&
+            transportListener.context === context) {
           this._transportListeners.splice(i, 1);
         }
       }
@@ -427,8 +429,8 @@
             transportListener.listener.apply(transportListener.context,
                 [message.params]);
           }
-        })
-      }, this)
+        });
+      }, this);
     },
 
     /**
@@ -517,15 +519,15 @@
      * @private
      */
     _isItemGarbageMessageListener: function(item) {
-      return StorageMessenger._itemContainsMessageListener(item)
-          && StorageMessenger._isGarbageItem(item)
-          && !StorageMessenger._itemContainsTargetId(item, this._ownTargetId);
+      return StorageMessenger._itemContainsMessageListener(item) &&
+          StorageMessenger._isGarbageItem(item) &&
+          !StorageMessenger._itemContainsTargetId(item, this._ownTargetId);
     },
 
     _isItemOtherMessageListener: function(item) {
-      return StorageMessenger._itemContainsMessageListener(item)
-          && !StorageMessenger._isGarbageItem(item)
-          && !StorageMessenger._itemContainsTargetId(item, this._ownTargetId)
+      return StorageMessenger._itemContainsMessageListener(item) &&
+          !StorageMessenger._isGarbageItem(item) &&
+          !StorageMessenger._itemContainsTargetId(item, this._ownTargetId);
     },
 
     /**

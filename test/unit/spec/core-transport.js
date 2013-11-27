@@ -28,7 +28,7 @@ describe('Transport instance', function() {
       removeItem: function () {},
       key: function() {},
       getItem: function() {},
-      removeItem: function() {},
+      clear: function() {},
       length: 0
     };
 
@@ -44,7 +44,7 @@ describe('Transport instance', function() {
         ._removeGarbageMessageListenersAndMessages.restore();
     StorageMessenger._guid.restore();
     StorageMessenger._addDomEventListener.restore();
-  })
+  });
 
   it('should have correct storage', function() {
     expect(transport._storage).to.be(mockStorage);
@@ -56,7 +56,7 @@ describe('Transport instance', function() {
 
   it('should have correct message listener key', function() {
     expect(transport._MESSAGE_LISTENER_KEY).to.be('{"tag":"8cc00beb-0' +
-        '943-41e8-9bbf-a74f91e3679e","targetId":"mock-guid"}')
+        '943-41e8-9bbf-a74f91e3679e","targetId":"mock-guid"}');
   });
 
   it('should have correct transport listeners', function() {
@@ -168,7 +168,7 @@ describe('Transport instance', function() {
           context: context
         }
       ]);
-    })
+    });
   });
 
   describe('ignore', function() {
@@ -227,9 +227,9 @@ describe('Transport instance', function() {
 
     beforeEach(function() {
       transport._storage.length = 2;
-      sinon.stub(transport._storage, 'key', function(i) {return i + '-key'});
+      sinon.stub(transport._storage, 'key', function(i) {return i + '-key';});
       sinon.stub(transport._storage, 'getItem', function(key) {
-        return key + '-value'
+        return key + '-value';
       });
       callback = sinon.spy();
       context = {};
@@ -404,7 +404,7 @@ describe('Transport instance', function() {
       transport._getOwnMessagesFromStorage(callback, context);
       clock.tick(1);
       expect(transport._getMessagesFromStorage.called).to.be(true);
-    })
+    });
 
     it('should apply callback with messages asynchronously', function() {
       transport._getOwnMessagesFromStorage(callback, context);
@@ -430,7 +430,7 @@ describe('Transport instance', function() {
         event: 'event',
         listener: listener,
         context: context
-      }]
+      }];
     });
 
     it('should apply listener if listener event matches message event',
@@ -663,7 +663,7 @@ describe('Transport instance', function() {
         StorageMessenger._itemContainsMessageListener.restore();
         StorageMessenger._isGarbageItem.restore();
         StorageMessenger._itemContainsTargetId.restore();
-      })
+      });
 
       it('should check if item contains message listener', function() {
         transport._isItemGarbageMessageListener(FIRST_ITEM);
@@ -701,7 +701,7 @@ describe('Transport instance', function() {
         StorageMessenger._itemContainsMessageListener.restore();
         StorageMessenger._isGarbageItem.restore();
         StorageMessenger._itemContainsTargetId.restore();
-      })
+      });
 
       it('should return false', function() {
         expect(transport._isItemGarbageMessageListener(FIRST_ITEM)).to.be(false);
@@ -721,7 +721,7 @@ describe('Transport instance', function() {
         StorageMessenger._itemContainsMessageListener.restore();
         StorageMessenger._isGarbageItem.restore();
         StorageMessenger._itemContainsTargetId.restore();
-      })
+      });
 
       it('should return false', function() {
         expect(transport._isItemGarbageMessageListener(FIRST_ITEM)).to.be(false);
@@ -741,7 +741,7 @@ describe('Transport instance', function() {
         StorageMessenger._itemContainsMessageListener.restore();
         StorageMessenger._isGarbageItem.restore();
         StorageMessenger._itemContainsTargetId.restore();
-      })
+      });
 
       it('should return false', function() {
         expect(transport._isItemGarbageMessageListener(FIRST_ITEM)).to.be(false);
@@ -763,7 +763,7 @@ describe('Transport instance', function() {
         StorageMessenger._itemContainsMessageListener.restore();
         StorageMessenger._isGarbageItem.restore();
         StorageMessenger._itemContainsTargetId.restore();
-      })
+      });
 
       it('should check if item contains message listener', function() {
         transport._isItemOtherMessageListener(FIRST_ITEM);
@@ -801,7 +801,7 @@ describe('Transport instance', function() {
         StorageMessenger._itemContainsMessageListener.restore();
         StorageMessenger._isGarbageItem.restore();
         StorageMessenger._itemContainsTargetId.restore();
-      })
+      });
 
       it('should return false', function() {
         expect(transport._isItemOtherMessageListener(FIRST_ITEM)).to.be(false);
@@ -821,7 +821,7 @@ describe('Transport instance', function() {
         StorageMessenger._itemContainsMessageListener.restore();
         StorageMessenger._isGarbageItem.restore();
         StorageMessenger._itemContainsTargetId.restore();
-      })
+      });
 
       it('should return false', function() {
         expect(transport._isItemOtherMessageListener(FIRST_ITEM)).to.be(false);
@@ -841,7 +841,7 @@ describe('Transport instance', function() {
         StorageMessenger._itemContainsMessageListener.restore();
         StorageMessenger._isGarbageItem.restore();
         StorageMessenger._itemContainsTargetId.restore();
-      })
+      });
 
       it('should return false', function() {
         expect(transport._isItemOtherMessageListener(FIRST_ITEM)).to.be(false);
