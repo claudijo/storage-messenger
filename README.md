@@ -8,7 +8,7 @@ Background
 ----------
 Several browser windows with content loaded from the same domain share localStorage as a common resource. A storage event is fired when content in localStorage is changes, which then can be used to build an event driven transport mechanism for message passing. This is particularly useful when the browser windows don't have direct references to each other, for instance through `window.open()` or `window.opener`.
 
-StorageMessenger.js can be used to share state between different browser windows without the need of a central server. An interesting, but by no means fair, comparison can be made with [Meteor.js](http://www.meteor.com), which instead uses a server to sync state among different browser windows.
+StorageMessenger.js can be used to share state between different browser windows without the need for a central server. An interesting, but by no means fair, comparison can be made with [Meteor.js](http://www.meteor.com), which instead uses a server to sync state among different browser windows.
 
 Usage
 -----
@@ -38,7 +38,7 @@ Integration tests require [Java Runtime Environment (JRE)](http://java.com/downl
 
 Unit Tests
 ----------
-Point your target browser to storage-messenger/test/unit/spec-runner.html.
+Point your target browser to `storage-messenger/test/unit/spec-runner.html`.
 
 Integration Tests
 -----------------
