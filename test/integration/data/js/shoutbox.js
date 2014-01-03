@@ -1,20 +1,53 @@
-(function(root){
+(function(){
+  var window = this;
+
   // Utility object dom scripting normalization
-  var dom = {};
-  var STORAGE_TRANSPORT_EVENT_NAME = 'message';
+  var DOM = {
+    on: (function() {
+      if(window.addEventListener) {
+        return function(target, type, listener) {
+          target.addEventListener(type, listener, false);
+        };
+      }
+      return function(target, type, listener) {
+        target.attachEvent('on' + type, listener);
+      };
+    })(),
+
+    off: (function() {
+      if(window.removeEventListener) {
+        return function(target, type, listener) {
+          target.removeEventListener(type, listener, false);
+        };
+      }
+      return function(target, type, listener) {
+        target.detachEvent('on' + type, listener);
+      };
+    })(),
+
+    cancelEvent: function(event) {
+      if (event.preventDefault) {
+        event.preventDefault();
+      } else {
+        event.returnValue = false;
+      }
+    }
+  };
+
+  var STORAGE_TRANSPORT_EVENT_TYPE = 'message';
 
   // Storage transport
-  var transport = new StorageMessenger.Transport();
+  var eventHub = StorageMessenger.EventHub.create();
 
   // Send message using storage transport
   var sendMessage = function(event) {
     var messageInput = document.getElementById('message');
     var message = messageInput.value;
 
-    dom.cancelEvent(event);
+    DOM.cancelEvent(event);
 
     messageInput.value = '';
-    transport.trigger(STORAGE_TRANSPORT_EVENT_NAME, message);
+    eventHub.trigger(STORAGE_TRANSPORT_EVENT_TYPE, message);
   };
 
   // Handler for storage transport message events
@@ -23,27 +56,6 @@
     document.getElementById('received-message').value = value;
   };
 
-  dom.cancelEvent = function(event) {
-    if (event.preventDefault) {
-      event.preventDefault();
-    } else {
-      event.returnValue = false;
-    }
-  };
-
-  if (window.addEventListener) {
-    dom.listen = function(element, event, listener) {
-      element.addEventListener(event, listener, false);
-    };
-  } else {
-    dom.listen = function(element, event, listener) {
-      element.attachEvent('on' + event, listener);
-    };
-  }
-
-  transport.listen(STORAGE_TRANSPORT_EVENT_NAME, showReceivedMessage);
-  dom.listen(document.getElementById('message-form'), 'submit', sendMessage);
-
-  // Export transport to global object so we can test its privates.
-  root.transport = transport;
-})(this);
+  eventHub.on(STORAGE_TRANSPORT_EVENT_TYPE, showReceivedMessage);
+  DOM.on(document.getElementById('message-form'), 'submit', sendMessage);
+}).call(this);

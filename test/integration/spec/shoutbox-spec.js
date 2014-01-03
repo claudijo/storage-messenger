@@ -9,12 +9,6 @@ test.suite(function(env) {
 
   var driver;
 
-  var assertHasOwnStorageMessageListenerKeyInStorage = function() {
-    shoutbox.getTransportMessageListenerKey(driver).then(function(key) {
-      assert(seleniumUtils.getLocalStorageItem(driver, key)).not.equalTo(null);
-    });
-  };
-
   beforeEach(function() {
     driver = env.driver;
     driver.get(Pages.shoutbox);
@@ -22,21 +16,18 @@ test.suite(function(env) {
 
   describe('Single browser window', function() {
     test.it('should have correct items in storage', function() {
-      assertHasOwnStorageMessageListenerKeyInStorage();
       assert(seleniumUtils.getLocalStorageSize(driver)).equalTo(1);
     });
 
     test.it('should have correct number of items in storage after sending ' +
         'message without any other windows open', function() {
       shoutbox.sendMessage(driver, 'hey');
-      assertHasOwnStorageMessageListenerKeyInStorage();
       assert(seleniumUtils.getLocalStorageSize(driver)).equalTo(1);
     });
 
     test.it('should have correct items in storage after refreshing window',
         function() {
       driver.navigate().refresh();
-      assertHasOwnStorageMessageListenerKeyInStorage();
       assert(seleniumUtils.getLocalStorageSize(driver)).equalTo(1);
     });
 
@@ -44,7 +35,6 @@ test.suite(function(env) {
         'any page and going back', function() {
       driver.get(Pages.empty);
       driver.get(Pages.shoutbox);
-      assertHasOwnStorageMessageListenerKeyInStorage();
       assert(seleniumUtils.getLocalStorageSize(driver)).equalTo(1);
     });
 
@@ -53,7 +43,6 @@ test.suite(function(env) {
       env.refreshDriver();
       driver = env.driver;
       driver.get(Pages.shoutbox);
-      assertHasOwnStorageMessageListenerKeyInStorage();
       assert(seleniumUtils.getLocalStorageSize(driver)).equalTo(1);
     });
   });
@@ -87,18 +76,14 @@ test.suite(function(env) {
 
     test.it('should have correct items in local storage after opening ' +
         'second window', function() {
-      assertHasOwnStorageMessageListenerKeyInStorage();
       driver.switchTo().window('receiver');
-      assertHasOwnStorageMessageListenerKeyInStorage();
       assert(seleniumUtils.getLocalStorageSize(driver)).equalTo(2);
     });
 
     test.it('should have correct items in local storage after sending ' +
         'message with second window open', function() {
       shoutbox.sendMessage(driver, 'hey');
-      assertHasOwnStorageMessageListenerKeyInStorage();
       driver.switchTo().window('receiver');
-      assertHasOwnStorageMessageListenerKeyInStorage();
       assert(seleniumUtils.getLocalStorageSize(driver)).equalTo(2);
     });
 
@@ -107,7 +92,6 @@ test.suite(function(env) {
       driver.switchTo().window('receiver');
       driver.close();
       driver.switchTo().window(mainWindowHandle);
-      assertHasOwnStorageMessageListenerKeyInStorage();
       assert(seleniumUtils.getLocalStorageSize(driver)).equalTo(1);
     });
 

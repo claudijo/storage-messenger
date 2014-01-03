@@ -8,8 +8,3 @@ exports.sendMessage = function(driver, message) {
 exports.getReceivedMessage = function(driver) {
   return driver.findElement(By.id('received-message')).getAttribute('value');
 };
-
-exports.getTransportMessageListenerKey = function(driver) {
-  return driver.executeScript(
-      'return window.transport._MESSAGE_LISTENER_KEY');
-};
