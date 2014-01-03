@@ -16,7 +16,7 @@
    */
   var StorageMessenger = {
     /**
-     * Previous value of the global `StorageMessenger` variable.
+     * Previous value of the global StorageMessenger variable.
      * @type {*}
      * @private
      */
@@ -33,12 +33,13 @@
     /**
      * Namespace for methods related to DOM scripting browser normalization.
      * @constant
-     * @namespace
+     * @namespace DOM
      */
     DOM: {
       /**
-       * Adds DOM event listener. (Reassigned on init-time depending on browser
+       * Adds DOM event listener. (Assigned on init-time depending on browser
        *    capabilities.)
+       * @method
        * @param {EventTarget} target - Event target
        * @param {string} event - Event type
        * @param {function(Object)} callback - Event listener that is invoked
@@ -56,8 +57,9 @@
       })(),
 
       /**
-       * Removes DOM event listener. (Reassigned on init-time depending on
+       * Removes DOM event listener. (Assigned on init-time depending on
        *    browser capabilities.)
+       * @method
        * @param {EventTarget} target - Event target
        * @param {string} event - Event type
        * @param {function(Object)} callback - Event listener that is invoked
@@ -76,8 +78,9 @@
     },
 
     /**
-     * LocalStorage item tags.
+     * Namespace for localStorage item tags.
      * @constant
+     * @namespace
      */
     TAG: {
       /**
@@ -107,7 +110,7 @@
     ITEM_TTL_MS: 400,
 
     /**
-     * Restores previous value of the global `StorageMessenger` variable.
+     * Restores previous value of the global StorageMessenger variable.
      * @returns {StorageMessenger}
      */
     noConflict: function() {
@@ -511,8 +514,10 @@
   };
 
   /**
-   * Creates a wrapper object for an item in localStorage. Items will be
-   *    discarded unless key holds JSON data, and the value holds a timestamp.
+   * Creates a wrapper object for an item in localStorage. Items should be
+   *    discarded unless key holds JSON data containing any
+   *    [StorageMessenger.TAG]{@link module:StorageMessenger~StorageMessenger.TAG},
+   *    and the value holds a timestamp.
    * @param {string} key - LocalStorage item key.
    * @param {string} value - LocalStorage item value.
    * @constructor
