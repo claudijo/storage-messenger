@@ -286,8 +286,9 @@
      *    entries in localStorage.
      */
     destroy: function() {
+      var storageEventTarget = 'onstorage' in document ? document : window;
       this.deregisterOwnMessageListener_();
-      StorageMessenger.DOM.off(window, 'storage', this.storageListener);
+      StorageMessenger.DOM.off(storageEventTarget, 'storage', this.storageListener);
       StorageMessenger.DOM.off(window, 'unload', this.storageListener);
     },
 
