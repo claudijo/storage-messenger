@@ -13,22 +13,29 @@
 <!--[if IE]>
 <script src="../../node_modules/sinon/pkg/sinon-ie.js"></script>
 <![endif]-->
+<script src="../../node_modules/sinon-expect/lib/sinon-expect.js"></script>
 <script>mocha.setup('bdd')</script>
 
-<!-- Source -->
+<!-- Spec helpers -->
+<script src="../mocha/spec-helper/defined-global-storage-messenger.js"></script>
+<!--<script src="spec-helper/guid-matcher.js"></script>-->
+<script src="../mocha/spec-helper/fake-local-storage.js"></script>
+<script src="spec-helper/sinon-expect.js"></script>
+
+<!-- Source files-->
 <script type="text/javascript" src="../../src/polyfill/bind.js"></script>
 <script type="text/javascript" src="../../src/polyfill/foreach.js"></script>
 <script type="text/javascript" src="../../src/core.js"></script>
 
-<!-- Spec -->
-<script src="spec/core.js"></script>
-<script src="spec/core-message.js"></script>
-<script src="spec/core-transport.js"></script>
+<!-- Spec files -->
+<!--<script src="spec/storage-messenger.js"></script>-->
+<!--<script src="spec/storage-messenger-event-hub.js"></script>-->
+<script src="spec/storage-messenger-transport.js"></script>
 
 <script>
   mocha.checkLeaks();
-  mocha.setup({globals: ['addEventListener', 'attachEvent',
-      'removeEventListener', 'detachEvent']});
+//  mocha.setup({globals: ['addEventListener', 'attachEvent',
+//    'removeEventListener', 'detachEvent']});
   mocha.run();
 </script>
 </body>
