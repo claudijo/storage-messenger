@@ -1,12 +1,12 @@
 StorageMessenger.js
 ===================
-StorageMessenger.js is a micro library for JavaScript that utilizes HTML5 localStorage as transport mechanism for passing messages between browser windows with content loaded from the same domain.
+StorageMessenger.js is a JavaScript micro-library that utilizes HTML5 localStorage as transport mechanism for passing messages between browser windows with content loaded from the same domain.
 
-The library runs in browsers that support Web Storage, including +IE8, Firefox, Chrome, Safari, Chrome, and Opera.
+The library runs in browsers that support localStorage, including Internet Explorer 8+, Firefox, Chrome, Safari, Chrome, and Opera.
 
 Background
 ----------
-Several browser windows with content loaded from the same domain share localStorage as a common resource. A storage event is fired when content in localStorage is changes, which then can be used to build an event driven transport mechanism for message passing. This is particularly useful when the browser windows don't have direct references to each other, for instance through `window.open()` or `window.opener`.
+Several browser windows with content loaded from the same domain share localStorage as a common resource. A storage event is fired when content in localStorage is changed, which then can be used to build an event driven transport mechanism for message passing. This is particularly useful when the browser windows don't have direct references to each other, for instance through `window.open()` or `window.opener`.
 
 StorageMessenger.js can be used to share state between different browser windows without the need for a central server. An interesting, but by no means fair, comparison can be made with [Meteor.js](http://www.meteor.com), which instead uses a server to sync state among different browser windows.
 
@@ -16,13 +16,13 @@ StorageMessenger.js exposes a global `StorageMessenger` namespace object once lo
 
 ```js
 // Create a transport instance
-var transport = new StorageMessenger.Transport();
+var eventHub = new StorageMessenger.EventHub.create();
 
 // Trigger event in one browser window
-transport.trigger(event, [*args]);
+eventHub.trigger(event, [*args]);
 
 // Listen for events in another browser window
-transport.listen(event, callback, [context]);
+eventHub.on(event, callback);
 
 // Avoid polluting the global scope
 var LocalCopyOfStorageMessenger = StorageMessenger.noConflict();
@@ -61,6 +61,6 @@ Technical Notes and Disclaimer
 ------------------------------
 StorageMessenger.js is 100% event driven, and does not rely on polling localStorage. The implementation is in general suboptimal in order to support IE8 without having to split up the logic in different code paths. Efforts have been made to avoid the risk of race conditions considering that the web storage mutex is not implemented in all browsers.
 
-On frequent event passing with many browser windows opened a substantial amount of data will be flushed through localStorage. A high number of already present items in localStorage will have negative impact on performance.
+On frequent event passing with many browser windows opened, a substantial amount of data will be flushed through localStorage. A high number of already present items in localStorage will have negative impact on performance.
 
 
