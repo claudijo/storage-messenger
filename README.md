@@ -62,7 +62,7 @@ Note that the browser's popup blocker might need to be disabled manually to make
 
 Technical Notes and Disclaimer
 ------------------------------
-StorageMessenger.js is 100% event driven, and does not rely on polling localStorage. The implementation is in general suboptimal in order to support IE8 without having to split up the logic in different code paths. Efforts have been made to avoid the risk of race conditions considering that the web storage mutex is not implemented in all browsers.
+StorageMessenger.js is 100% event driven, and does not rely on polling localStorage. The implementation is in general suboptimal in order to support IE8 without having to split up the logic in different code paths. Efforts have been made to avoid the risk of race conditions considering that the web storage mutex is not guaranteed to be implemented in all browsers.
 
 On frequent event passing with many browser windows opened, a substantial amount of data will be flushed through localStorage. A high number of already present items in localStorage will have negative impact on performance.
 
