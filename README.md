@@ -16,13 +16,16 @@ StorageMessenger.js exposes a global `StorageMessenger` namespace object once lo
 
 ```js
 // Create a transport instance
-var eventHub = new StorageMessenger.EventHub.create();
+var eventHub = StorageMessenger.EventHub.create();
 
 // Trigger event in one browser window
 eventHub.trigger(event, [*args]);
 
-// Listen for events in another browser window
+// Listen for specified event coming from another browser window
 eventHub.on(event, callback);
+
+// Ignore specified event coming from another browser window
+eventHub.off(event, callback);
 
 // Avoid polluting the global scope
 var LocalCopyOfStorageMessenger = StorageMessenger.noConflict();
