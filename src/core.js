@@ -6,20 +6,8 @@
  * @license The MIT License (MIT) Copyright (c) 2013 Claudijo Borovic
  */
 
-( /** @exports StorageMessenger*/ function() {
+( /** @exports StorageMessenger*/ function(window, document) {
   'use strict';
-
-  /**
-   * Local reference to the global window object.
-   * @type {Window}
-   */
-  var window = this;
-
-  /**
-   * Local reference to the document object.
-   * @type {Document}
-   */
-  var document = this.document;
 
   /**
    * StorageMessenger namespace object that will be exposed on the global window
@@ -580,4 +568,4 @@
 
   // Export StorageMessenger to global object.
   window.StorageMessenger = StorageMessenger;
-}).call(this);
+})(window, document);
