@@ -21,6 +21,41 @@
   // garbage.
   var ITEM_TTL_MS = 400;
 
+  // Creates a wrapper object for an item in localStorage. Items should be
+  // discarded unless key holds JSON data containing any TAG,
+  // and the value holds a timestamp.
+  var Item = function(key, value) {
+    this.key_ = key;
+    this.value_ = value;
+  };
+
+  Item.prototype = {
+    // Returns true if this item contains a message.
+    containsMessage: function() {
+      return this.key_.indexOf(MESSAGE_TAG) !== -1;
+    },
+
+    // Returns true if this item contains a message listener.
+    containsMessageListener: function() {
+      return this.key_.indexOf(MESSAGE_LISTENER_TAG) !== -1;
+    },
+
+    // Returns true if this item contains specified target id.
+    containsTargetId: function(targetId) {
+      return this.key_.indexOf(targetId) !== -1;
+    },
+
+    // Returns true if this item is considered outdated.
+    isDead: function() {
+      return +new Date() - parseInt(this.value_, 10) > ITEM_TTL_MS;
+    },
+
+    // Returns key of this item.
+    getKey: function() {
+      return this.key_;
+    }
+  };
+
   // StorageMessenger namespace object that will be exposed on the global window
   // object.
   var StorageMessenger = {
@@ -321,7 +356,7 @@
       while(i--) {
         key = this.localStorage_.key(i);
         value = this.localStorage_.getItem(key);
-        callback(new StorageMessenger.Item(key, value));
+        callback(new Item(key, value));
       }
     },
 
@@ -333,41 +368,6 @@
           callback(item);
         }
       });
-    }
-  };
-
-  // Creates a wrapper object for an item in localStorage. Items should be
-  // discarded unless key holds JSON data containing any TAG,
-  // and the value holds a timestamp.
-  StorageMessenger.Item = function(key, value) {
-    this.key_ = key;
-    this.value_ = value;
-  };
-
-  StorageMessenger.Item.prototype = {
-    // Returns true if this item contains a message.
-    containsMessage: function() {
-      return this.key_.indexOf(MESSAGE_TAG) !== -1;
-    },
-
-    // Returns true if this item contains a message listener.
-    containsMessageListener: function() {
-      return this.key_.indexOf(MESSAGE_LISTENER_TAG) !== -1;
-    },
-
-    // Returns true if this item contains specified target id.
-    containsTargetId: function(targetId) {
-      return this.key_.indexOf(targetId) !== -1;
-    },
-
-    // Returns true if this item is considered outdated.
-    isDead: function() {
-      return +new Date() - parseInt(this.value_, 10) > ITEM_TTL_MS;
-    },
-
-    // Returns key of this item.
-    getKey: function() {
-      return this.key_;
     }
   };
 
