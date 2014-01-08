@@ -40,6 +40,15 @@
   };
 
   /**
+   * Number of milliseconds before a item found in localStorage is considered
+   *    garbage.
+   * @constant
+   * @type {number}
+   * @default
+   */
+  var ITEM_TTL_MS = 400;
+
+  /**
    * StorageMessenger namespace object that will be exposed on the global window
    *    object.
    * @namespace
@@ -99,15 +108,6 @@
         };
       })()
     },
-
-    /**
-     * Number of milliseconds before a item found in localStorage is considered
-     *    garbage.
-     * @constant
-     * @type {number}
-     * @default
-     */
-    ITEM_TTL_MS: 400,
 
     /**
      * Restores previous value of the global StorageMessenger variable.
@@ -324,7 +324,7 @@
       this.storeMessageListener_(this.targetId_);
       this.keepAliveInterval_ =
           setInterval(this.storeMessageListener_.bind(this, this.targetId_),
-          StorageMessenger.ITEM_TTL_MS);
+          ITEM_TTL_MS);
     },
 
     /**
@@ -559,8 +559,7 @@
      * @returns {boolean}
      */
     isDead: function() {
-      return +new Date() - parseInt(this.value_, 10) >
-          StorageMessenger.ITEM_TTL_MS;
+      return +new Date() - parseInt(this.value_, 10) > ITEM_TTL_MS;
     },
 
     /**
