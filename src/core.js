@@ -22,7 +22,7 @@
   var ITEM_TTL_MS = 400;
 
   // Creates a wrapper object for an item in localStorage. Items should be
-  // discarded unless key holds JSON data containing any TAG,
+  // discarded unless key holds JSON data containing any XXX_TAG,
   // and the value holds a timestamp.
   var Item = function(key, value) {
     this.key_ = key;
