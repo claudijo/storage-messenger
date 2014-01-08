@@ -10,18 +10,18 @@
   'use strict';
 
   /**
+   * Previous value of the global StorageMessenger variable.
+   * @type {*}
+   * @private
+   */
+  var previousStorageMessenger_ = window.StorageMessenger;
+
+  /**
    * StorageMessenger namespace object that will be exposed on the global window
    *    object.
    * @namespace
    */
   var StorageMessenger = {
-    /**
-     * Previous value of the global StorageMessenger variable.
-     * @type {*}
-     * @private
-     */
-    previousStorageMessenger_: window.StorageMessenger,
-
     /**
      * Current version.
      * @constant
@@ -114,7 +114,7 @@
      * @returns {StorageMessenger}
      */
     noConflict: function() {
-      window.StorageMessenger = this.previousStorageMessenger_;
+      window.StorageMessenger = previousStorageMessenger_;
       return this;
     },
 
