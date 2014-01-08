@@ -11,14 +11,11 @@
   // Previous value of the global StorageMessenger variable.
   var previousStorageMessenger_ = window.StorageMessenger;
 
-  // Namespace object for localStorage item tags.
-  var TAG = {
     // Unique string that identifies messages in localStorage items.
-    MESSAGE: 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9',
+  var MESSAGE_TAG = 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9';
 
     // Unique string that identifies message listeners in localStorage items.
-    MESSAGE_LISTENER: '8cc00beb-0943-41e8-9bbf-a74f91e3679e'
-  };
+  var MESSAGE_LISTENER_TAG = '8cc00beb-0943-41e8-9bbf-a74f91e3679e';
 
   // Number of milliseconds before a item found in localStorage is considered
   // garbage.
@@ -238,7 +235,7 @@
     // Stores message listener in localStorage.
     storeMessageListener_: function(targetId) {
       var transportListener = {
-        tag: TAG.MESSAGE_LISTENER,
+        tag: MESSAGE_LISTENER_TAG,
         targetId: targetId
       };
       this.localStorage_.setItem(JSON.stringify(transportListener), +new Date());
@@ -249,7 +246,7 @@
       var listener = JSON.parse(item.getKey());
       var message = {
         messageId: StorageMessenger.guid(),
-        tag: TAG.MESSAGE,
+        tag: MESSAGE_TAG,
         targetId: listener.targetId,
         data: data
       };
@@ -350,12 +347,12 @@
   StorageMessenger.Item.prototype = {
     // Returns true if this item contains a message.
     containsMessage: function() {
-      return this.key_.indexOf(TAG.MESSAGE) !== -1;
+      return this.key_.indexOf(MESSAGE_TAG) !== -1;
     },
 
     // Returns true if this item contains a message listener.
     containsMessageListener: function() {
-      return this.key_.indexOf(TAG.MESSAGE_LISTENER) !== -1;
+      return this.key_.indexOf(MESSAGE_LISTENER_TAG) !== -1;
     },
 
     // Returns true if this item contains specified target id.
