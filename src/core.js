@@ -1,9 +1,8 @@
-/**
- * @fileoverview StorageMessenger.js is a JavaScript micro-library that
- *    utilizes HTML5 localStorage as transport mechanism for passing messages
- *    between browser windows with content loaded from the same domain.
- * @author Claudijo Borovic <claudijo.borovic@gmail.com>
- * @license The MIT License (MIT) Copyright (c) 2013 Claudijo Borovic
+/**!
+ * StorageMessenger.js is a JavaScript micro-library that utilizes HTML5
+ * localStorage as transport mechanism for passing messages between browser
+ * windows with content loaded from the same domain.
+ * The MIT License (MIT), Copyright (c) 2013-2014 Claudijo Borovic
  */
 
 (function(window, document) {
