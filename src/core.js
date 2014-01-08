@@ -289,7 +289,7 @@
       var storageEventTarget = 'onstorage' in document ? document : window;
       this.deregisterOwnMessageListener_();
       StorageMessenger.DOM.off(storageEventTarget, 'storage', this.storageListener);
-      StorageMessenger.DOM.off(window, 'unload', this.storageListener);
+      StorageMessenger.DOM.off(window, 'unload', this.unloadListener);
     },
 
     /**

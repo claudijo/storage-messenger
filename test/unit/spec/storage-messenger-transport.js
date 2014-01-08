@@ -369,8 +369,8 @@ describe('StorageMessenger.Transport', function() {
 
     it('should remove DOM unload event listener', function() {
       transport.destroy();
-      expect(StorageMessenger.DOM.off).was.calledWith(storageEventTarget,
-          'unload', transport.storageListener);
+      expect(StorageMessenger.DOM.off).was.calledWith(window,
+          'unload', transport.unloadListener);
     });
 
     it('should remove own message listener from localStorage', function() {
