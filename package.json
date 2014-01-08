@@ -20,13 +20,14 @@
     "grunt-contrib-jshint": "~0.7.2",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.2.7",
-    "grunt-contrib-jasmine": "~0.5.2",
     "karma-chrome-launcher": "~0.1.2",
     "karma-firefox-launcher": "~0.1.3",
     "karma-script-launcher": "~0.1.0",
     "karma-phantomjs-launcher": "~0.1.1",
     "karma": "~0.10.9",
-    "karma-mocha": "~0.1.1"
+    "karma-mocha": "~0.1.1",
+    "grunt-karma": "~0.6.2",
+    "karma-coverage": "~0.1.4"
   },
   "scripts": {
     "test": "node_modules/mocha/bin/mocha -R list --recursive test/integration/spec"
