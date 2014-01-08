@@ -6,77 +6,36 @@
  * @license The MIT License (MIT) Copyright (c) 2013 Claudijo Borovic
  */
 
-( /** @exports StorageMessenger*/ function(window, document) {
+(function(window, document) {
   'use strict';
 
-  /**
-   * Previous value of the global StorageMessenger variable.
-   * @type {*}
-   * @private
-   */
+  // Previous value of the global StorageMessenger variable.
   var previousStorageMessenger_ = window.StorageMessenger;
 
-  /**
-   * Namespace for localStorage item tags.
-   * @constant
-   * @namespace
-   */
+  // Namespace object for localStorage item tags.
   var TAG = {
-    /**
-     * Unique string that identifies messages in localStorage items.
-     * @constant
-     * @type {string}
-     * @default
-     */
+    // Unique string that identifies messages in localStorage items.
     MESSAGE: 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9',
 
-    /**
-     * Unique string that identifies message listeners in localStorage items.
-     * @constant
-     * @type {string}
-     * @default
-     */
-     MESSAGE_LISTENER: '8cc00beb-0943-41e8-9bbf-a74f91e3679e'
+    // Unique string that identifies message listeners in localStorage items.
+    MESSAGE_LISTENER: '8cc00beb-0943-41e8-9bbf-a74f91e3679e'
   };
 
-  /**
-   * Number of milliseconds before a item found in localStorage is considered
-   *    garbage.
-   * @constant
-   * @type {number}
-   * @default
-   */
+  // Number of milliseconds before a item found in localStorage is considered
+  // garbage.
   var ITEM_TTL_MS = 400;
 
-  /**
-   * StorageMessenger namespace object that will be exposed on the global window
-   *    object.
-   * @namespace
-   */
+  // StorageMessenger namespace object that will be exposed on the global window
+  // object.
   var StorageMessenger = {
-    /**
-     * Current version.
-     * @constant
-     * @type {string}
-     * @default
-     */
+    // Current version.
     VERSION: '@VERSION@',
 
-    /**
-     * Namespace for methods related to DOM scripting browser normalization.
-     * @constant
-     * @namespace DOM
-     */
+    // Namespace object for methods related to DOM scripting browser
+    // normalization.
     DOM: {
-      /**
-       * Adds DOM event listener. (Assigned on init-time depending on browser
-       *    capabilities.)
-       * @method
-       * @param {EventTarget} target - Event target
-       * @param {string} event - Event type
-       * @param {function(Object)} callback - Event listener that is invoked
-       *    with a DOM event object as argument.
-       */
+      // Adds DOM event listener. (Assigned on init-time depending on browser
+      // capabilities.)
       on: (function() {
         if(window.addEventListener) {
           return function(target, event, callback) {
@@ -88,15 +47,8 @@
         };
       })(),
 
-      /**
-       * Removes DOM event listener. (Assigned on init-time depending on
-       *    browser capabilities.)
-       * @method
-       * @param {EventTarget} target - Event target
-       * @param {string} event - Event type
-       * @param {function(Object)} callback - Event listener that is invoked
-       *    with a DOM event object as argument.
-       */
+      // Removes DOM event listener. (Assigned on init-time depending on
+      // browser capabilities.)
       off: (function() {
         if(window.removeEventListener) {
           return function(target, event, callback) {
@@ -109,19 +61,13 @@
       })()
     },
 
-    /**
-     * Restores previous value of the global StorageMessenger variable.
-     * @returns {StorageMessenger}
-     */
+    // Restores previous value of the global StorageMessenger variable.
     noConflict: function() {
       window.StorageMessenger = previousStorageMessenger_;
       return this;
     },
 
-    /**
-     * Generates version 4 GUID.
-     * @returns {string}
-     */
+    // Generates version 4 GUID.
     guid: function() {
       var s4 = function() {
         return Math.floor((1 + Math.random()) * 0x10000).toString(16)
@@ -133,40 +79,28 @@
     }
   };
 
-  /**
-   * Creates an eventHub with specified transport mechanism. This constructor
-   *    should not be used directly, instead use the
-   *    StorageMessenger.EventHub.create builder function.
-   * @param {StorageMessenger.Transport} transport - Transport abstraction over
-   *    localStorage.
-   * @constructor
-   */
+  // Creates an eventHub with specified transport mechanism. This constructor
+  // should not be used directly, instead use the
+  // StorageMessenger.EventHub.create builder function.
   StorageMessenger.EventHub = function(transport) {
     this.transport_ = transport;
     this.eventListeners_ = [];
   };
 
-  /**
-   * Creates an eventHub and wires up collaborators.
-   * @returns {StorageMessenger.EventHub}
-   */
+  // Creates an eventHub and wires up collaborators.
   StorageMessenger.EventHub.create = function() {
     var transport = StorageMessenger.Transport.create(localStorage);
     var eventHub = new StorageMessenger.EventHub(transport);
 
-    transport.setTransportDataListener(eventHub.transportDataListener.bind(eventHub));
+    transport.setTransportDataListener(
+        eventHub.transportDataListener.bind(eventHub));
 
     return eventHub;
   };
 
   StorageMessenger.EventHub.prototype = {
-    /**
-     * Triggers an event that can be listened to in other browser windows with
-     *    content loaded from the same domain.
-     * @param {string} event - Event type
-     * @param {*=} params - Parameters to the event. Must be JSON-serializable
-     *    (optional).
-     */
+    // Triggers an event that can be listened to in other browser windows with
+    // content loaded from the same domain.
     trigger: function(event, params) {
       var data = {
         event: event,
@@ -175,12 +109,7 @@
       this.transport_.send(data);
     },
 
-    /**
-     * Adds event listener.
-     * @param {string} event - Event type
-     * @param {function(*=)} callback - Event listener that is invoked
-     *    with event params, if any.
-     */
+    // Adds event listener.
     on: function(event, callback) {
       this.eventListeners_.push({
         event: event,
@@ -188,13 +117,8 @@
       });
     },
 
-    /**
-     * Removes event listener. Listener will be removed if event and callback
-     *    match added listener.
-     * @param {string} event - Event type
-     * @param {function(*=)} callback - Event listener that is invoked
-     *    with event params, if any.
-     */
+    // Removes event listener. Listener will be removed if event and callback
+    // match added listener.
     off: function(event, callback) {
       var eventListener;
       var i = this.eventListeners_.length;
@@ -207,12 +131,8 @@
       }
     },
 
-    /**
-     * Listener for transport data. Invokes event listeners that match the
-     *    passed data.
-     * @param {{event: string, params: *|undefined}} data - Data passed
-     *    from the transport.
-     */
+    // Listener for transport data. Invokes event listeners that match the
+    // passed data.
     transportDataListener: function(data) {
       this.eventListeners_.forEach(function(eventListener) {
         if (eventListener.event === data.event) {
@@ -222,14 +142,8 @@
     }
   };
 
-  /**
-   * Creates transport. This constructor should not be used directly, instead
-   *    use StorageMessenger.Transport.create builder function.
-   * @param {Storage} localStorage - Reference to localStorage.
-   * @param {string} targetId - Globally unique id for own message listener
-   *    registered in localStorage.
-   * @constructor
-   */
+  // Creates transport. This constructor should not be used directly, instead
+  // use StorageMessenger.Transport.create builder function.
   StorageMessenger.Transport = function(localStorage, targetId) {
     this.localStorage_ = localStorage;
     this.targetId_ = targetId;
@@ -237,11 +151,7 @@
     this.keepAliveInterval_ = null;
   };
 
-  /**
-   * Creates a transport, wires up collaborators and initializes transport.
-   * @param {Storage} localStorage - Reference to localStorage.
-   * @returns {StorageMessenger.Transport}
-   */
+  // Creates a transport, wires up collaborators and initializes transport.
   StorageMessenger.Transport.create = function(localStorage) {
     var targetId = StorageMessenger.guid();
     var transport = new StorageMessenger.Transport(localStorage, targetId);
@@ -264,38 +174,27 @@
   };
 
   StorageMessenger.Transport.prototype = {
-    /**
-     * Sends data.
-     * @param {*} data - Data to send. Must be JSON-serializable.
-     */
+    // Sends data.
     send: function(data) {
       this.storeMessageForOtherActiveMessageListeners_(data);
     },
 
-    /**
-     * Sets transport listener.
-     * @param {function(*)} transportDataListener - Listener that is invoked
-     *    with data as it arrives from the transport.
-     */
+    // Sets transport listener.
     setTransportDataListener: function(transportDataListener) {
       this.transportDataListener_ = transportDataListener;
     },
 
-    /**
-     * Cleans up transport, including removing DOM event listeners and own
-     *    entries in localStorage.
-     */
+    //  Cleans up transport, including removing DOM event listeners and own
+    // entries in localStorage.
     destroy: function() {
       var storageEventTarget = 'onstorage' in document ? document : window;
       this.deregisterOwnMessageListener_();
-      StorageMessenger.DOM.off(storageEventTarget, 'storage', this.storageListener);
+      StorageMessenger.DOM.off(storageEventTarget, 'storage',
+          this.storageListener);
       StorageMessenger.DOM.off(window, 'unload', this.unloadListener);
     },
 
-    /**
-     * Storage DOM event listener. Handles own messages found in localStorage.
-     * @param {Object} event - Storage DOM event
-     */
+    // Storage DOM event listener. Handles own messages found in localStorage.
     storageListener: function(event) {
       // Ignore events that have a key, but not a newValue, those
       // will be caused by deleting a item in storage on non IE8 browsers.
@@ -308,18 +207,14 @@
       setTimeout(this.handleOwnMessage_.bind(this), 0);
     },
 
-    /**
-     * Unload DOM event listener. Destroys this transport. Will in particularly
-     *    remove own entries in localStorage.
-     */
+    // Unload DOM event listener. Destroys this transport. Will in particularly
+    // remove own entries in localStorage.
     unloadListener: function() {
       this.destroy();
     },
 
-    /**
-     * Stores own message listener in localStorage and updates timestamp on
-     *    interval to keep message listener alive.
-     */
+    // Stores own message listener in localStorage and updates timestamp on
+    // interval to keep message listener alive.
     registerOwnMessageListener: function() {
       this.storeMessageListener_(this.targetId_);
       this.keepAliveInterval_ =
@@ -327,30 +222,21 @@
           ITEM_TTL_MS);
     },
 
-    /**
-     * Removes own message listener from localStorage and clears interval that
-     *    keeps message listener alive.
-     * @private
-     */
+    // Removes own message listener from localStorage and clears interval that
+    // keeps message listener alive.
     deregisterOwnMessageListener_: function() {
       this.forEachFilteredItem_(this.isOwnMessageListener_.bind(this),
           this.remove_.bind(this));
       clearInterval(this.keepAliveInterval_);
     },
 
-    /**
-     * Removes outdated items from localStorage.
-     */
+    // Removes outdated items from localStorage.
     removeGarbage: function() {
       this.forEachFilteredItem_(this.isGarbage_.bind(this),
           this.remove_.bind(this));
     },
 
-    /**
-     * Stores message listener in localStorage.
-     * @param {string} targetId - Target id for message listener to store.
-     * @private
-     */
+    // Stores message listener in localStorage.
     storeMessageListener_: function(targetId) {
       var transportListener = {
         tag: TAG.MESSAGE_LISTENER,
@@ -359,13 +245,7 @@
       this.localStorage_.setItem(JSON.stringify(transportListener), +new Date());
     },
 
-    /**
-     * Stores message in localStorage.
-     * @param {*} data - Message data to store.
-     * @param {StorageMessenger.Item} item - Item containing target id for
-     *    message.
-     * @private
-     */
+    // Stores message in localStorage.
     storeMessage_: function(data, item) {
       var listener = JSON.parse(item.getKey());
       var message = {
@@ -378,110 +258,64 @@
       this.localStorage_.setItem(JSON.stringify(message), +new Date());
     },
 
-    /**
-     * Handles any own messages found in localStorage.
-     * @private
-     */
+    // Handles any own messages found in localStorage.
     handleOwnMessage_: function() {
       this.forEachFilteredItem_(this.isOwnMessage_.bind(this),
           this.handleMessage_.bind(this));
     },
 
-    /**
-     * Stores a message in localStorage for each active message listener
-     *    (excluding self).
-     * @param {*} data - Message data to store.
-     * @private
-     */
+    // Stores a message in localStorage for each active message listener
+    // (excluding self).
     storeMessageForOtherActiveMessageListeners_: function(data) {
       this.forEachFilteredItem_(
           this.isOtherActiveMessageListener_.bind(this),
           this.storeMessage_.bind(this, data));
     },
 
-    /**
-     * Removes specified item from localStorage.
-     * @param {StorageMessenger.Item} item - Item to remove.
-     * @private
-     */
+    // Removes specified item from localStorage.
     remove_: function(item) {
       this.localStorage_.removeItem(item.getKey());
     },
 
-    /**
-     * Invokes transport listener with message data and removes message from
-     *    localStorage.
-     * @param {StorageMessenger.Item} item - Item containing message.
-     * @private
-     */
+    // Invokes transport listener with message data and removes message from
+    // localStorage.
     handleMessage_: function(item) {
       var message = JSON.parse(item.getKey());
       this.invokeTransportListener_(message.data);
       this.remove_(item);
     },
 
-    /**
-     * Returns true if specified item contains own message.
-     * @param {StorageMessenger.Item} item - Item possibly containing message
-     * @returns {boolean}
-     * @private
-     */
+    // Returns true if specified item contains own message.
     isOwnMessage_: function(item) {
       return item.containsMessage() &&
           item.containsTargetId(this.targetId_);
     },
 
-    /**
-     * Returns true if specified item contains other active message listener.
-     * @param {StorageMessenger.Item} item - Item possibly containing other
-     *    active message listener.
-     * @returns {boolean}
-     * @private
-     */
+    // Returns true if specified item contains other active message listener.
     isOtherActiveMessageListener_: function(item) {
       return item.containsMessageListener() &&
           !item.containsTargetId(this.targetId_) && !item.isDead();
     },
 
-    /**
-     * Returns true if specified item contains own message listener.
-     * @param {StorageMessenger.Item} item - Item possibly containing own
-     *    message listener.
-     * @returns {boolean}
-     * @private
-     */
+    // Returns true if specified item contains own message listener.
     isOwnMessageListener_: function(item) {
       return item.containsMessageListener() &&
           item.containsTargetId(this.targetId_);
     },
 
-    /**
-     * Returns true if specified item is considered garbage.
-     * @param {StorageMessenger.Item} item - Item possibly being garbage.
-     * @returns {boolean}
-     * @private
-     */
+    // Returns true if specified item is considered garbage.
     isGarbage_: function(item) {
       return item.isDead();
     },
 
-    /**
-     * Invokes listener with message data.
-     * @param {*} data - Message data.
-     * @private
-     */
+    // Invokes listener with message data.
     invokeTransportListener_: function(data) {
       if (this.transportDataListener_) {
         this.transportDataListener_(data);
       }
     },
 
-    /**
-     * Invokes specified callback once for each item in storage.
-     * @param {function(StorageMessenger.Item)} callback - Callback that
-     *    will be invoked once for each item in localStorage.
-     * @private
-     */
+    // Invokes specified callback once for each item in storage.
     forEachItem_: function(callback) {
       var i = this.localStorage_.length;
       var key;
@@ -495,16 +329,8 @@
       }
     },
 
-    /**
-     * Invokes specified callback once for each item in localStorage that passes
-     *    specified filter.
-     * @param {function(StorageMessenger.Item)} filter - Returns true if
-     *    item passes filter.
-     * @param {function(StorageMessenger.Item)} callback - Callback that
-     *    will be invoked once for each item in localStorage that passes the
-     *    specified filter.
-     * @private
-     */
+    // Invokes specified callback once for each item in localStorage that passes
+    // specified filter.
     forEachFilteredItem_: function(filter, callback) {
       this.forEachItem_(function(item) {
         if (filter(item)) {
@@ -514,58 +340,36 @@
     }
   };
 
-  /**
-   * Creates a wrapper object for an item in localStorage. Items should be
-   *    discarded unless key holds JSON data containing any
-   *    [StorageMessenger.TAG]{@link module:StorageMessenger~StorageMessenger.TAG},
-   *    and the value holds a timestamp.
-   * @param {string} key - LocalStorage item key.
-   * @param {string} value - LocalStorage item value.
-   * @constructor
-   */
+  // Creates a wrapper object for an item in localStorage. Items should be
+  // discarded unless key holds JSON data containing any TAG,
+  // and the value holds a timestamp.
   StorageMessenger.Item = function(key, value) {
     this.key_ = key;
     this.value_ = value;
   };
 
   StorageMessenger.Item.prototype = {
-    /**
-     * Returns true if this item contains a message.
-     * @returns {boolean}
-     */
+    // Returns true if this item contains a message.
     containsMessage: function() {
       return this.key_.indexOf(TAG.MESSAGE) !== -1;
     },
 
-    /**
-     * Returns true if this item contains a message listener.
-     * @returns {boolean}
-     */
+    // Returns true if this item contains a message listener.
     containsMessageListener: function() {
       return this.key_.indexOf(TAG.MESSAGE_LISTENER) !== -1;
     },
 
-    /**
-     * Returns true if this item contains specified target id.
-     * @param {string} targetId - Target id.
-     * @returns {boolean}
-     */
+    // Returns true if this item contains specified target id.
     containsTargetId: function(targetId) {
       return this.key_.indexOf(targetId) !== -1;
     },
 
-    /**
-     * Returns true if this item is considered outdated.
-     * @returns {boolean}
-     */
+    // Returns true if this item is considered outdated.
     isDead: function() {
       return +new Date() - parseInt(this.value_, 10) > ITEM_TTL_MS;
     },
 
-    /**
-     * Returns key of this item.
-     * @returns {string}
-     */
+    // Returns key of this item.
     getKey: function() {
       return this.key_;
     }
