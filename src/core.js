@@ -17,6 +17,29 @@
   var previousStorageMessenger_ = window.StorageMessenger;
 
   /**
+   * Namespace for localStorage item tags.
+   * @constant
+   * @namespace
+   */
+  var TAG = {
+    /**
+     * Unique string that identifies messages in localStorage items.
+     * @constant
+     * @type {string}
+     * @default
+     */
+    MESSAGE: 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9',
+
+    /**
+     * Unique string that identifies message listeners in localStorage items.
+     * @constant
+     * @type {string}
+     * @default
+     */
+     MESSAGE_LISTENER: '8cc00beb-0943-41e8-9bbf-a74f91e3679e'
+  };
+
+  /**
    * StorageMessenger namespace object that will be exposed on the global window
    *    object.
    * @namespace
@@ -75,29 +98,6 @@
           target.detachEvent('on' + event, callback);
         };
       })()
-    },
-
-    /**
-     * Namespace for localStorage item tags.
-     * @constant
-     * @namespace
-     */
-    TAG: {
-      /**
-       * Unique string that identifies messages in localStorage items.
-       * @constant
-       * @type {string}
-       * @default
-       */
-      MESSAGE: 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9',
-
-      /**
-       * Unique string that identifies message listeners in localStorage items.
-       * @constant
-       * @type {string}
-       * @default
-       */
-      MESSAGE_LISTENER: '8cc00beb-0943-41e8-9bbf-a74f91e3679e'
     },
 
     /**
@@ -353,7 +353,7 @@
      */
     storeMessageListener_: function(targetId) {
       var transportListener = {
-        tag: StorageMessenger.TAG.MESSAGE_LISTENER,
+        tag: TAG.MESSAGE_LISTENER,
         targetId: targetId
       };
       this.localStorage_.setItem(JSON.stringify(transportListener), +new Date());
@@ -370,7 +370,7 @@
       var listener = JSON.parse(item.getKey());
       var message = {
         messageId: StorageMessenger.guid(),
-        tag: StorageMessenger.TAG.MESSAGE,
+        tag: TAG.MESSAGE,
         targetId: listener.targetId,
         data: data
       };
@@ -534,7 +534,7 @@
      * @returns {boolean}
      */
     containsMessage: function() {
-      return this.key_.indexOf(StorageMessenger.TAG.MESSAGE) !== -1;
+      return this.key_.indexOf(TAG.MESSAGE) !== -1;
     },
 
     /**
@@ -542,7 +542,7 @@
      * @returns {boolean}
      */
     containsMessageListener: function() {
-      return this.key_.indexOf(StorageMessenger.TAG.MESSAGE_LISTENER) !== -1;
+      return this.key_.indexOf(TAG.MESSAGE_LISTENER) !== -1;
     },
 
     /**

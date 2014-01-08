@@ -7,18 +7,6 @@ describe('StorageMessenger', function() {
     });
   });
 
-  describe('tags', function() {
-    it('should have correct message tag', function() {
-      expect(StorageMessenger.TAG.MESSAGE).to
-          .be('b6297eba-31e4-11e3-8cf6-ce3f5508acd9');
-    });
-
-    it('should have correct message listener tag', function() {
-      expect(StorageMessenger.TAG.MESSAGE_LISTENER).to
-          .be('8cc00beb-0943-41e8-9bbf-a74f91e3679e');
-    });
-  });
-
   describe('guid', function() {
     var guidRegExp = /^(\{{0,1}([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}\}{0,1})$/;
 
