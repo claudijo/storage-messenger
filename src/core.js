@@ -1,376 +1,319 @@
-/**!
- * StorageMessenger.js is a JavaScript micro-library that utilizes HTML5
- * localStorage as transport mechanism for passing messages between browser
- * windows with content loaded from the same domain.
- * The MIT License (MIT), Copyright (c) 2013-2014 Claudijo Borovic
- */
+if (typeof DEV_MODE === 'undefined') {
+  DEV_MODE = true;
+}
 
-(function(window, document) {
+(function() {
   'use strict';
 
-  // Previous value of the global StorageMessenger variable.
-  var previousStorageMessenger_ = window.StorageMessenger;
+  var StorageMessenger = {};
+  var window = this;
+  var document = this.document;
 
-    // Unique string that identifies messages in localStorage items.
-  var MESSAGE_TAG = 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9';
+  var VERSION = '@VERSION@';
 
-    // Unique string that identifies message listeners in localStorage items.
-  var MESSAGE_LISTENER_TAG = '8cc00beb-0943-41e8-9bbf-a74f91e3679e';
+  var previousStorageMessenger = window.StorageMessenger;
+
+  // Unique string that identifies messages in localStorage items.
+  var EVENT_TAG = 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9';
+
+  // Unique string that identifies message listeners in localStorage items.
+  var EVENT_HANDLER_TAG = '8cc00beb-0943-41e8-9bbf-a74f91e3679e';
 
   // Number of milliseconds before a item found in localStorage is considered
   // garbage.
   var ITEM_TTL_MS = 400;
 
-  // Creates a wrapper object for an item in localStorage. Items should be
-  // discarded unless key holds JSON data containing any XXX_TAG,
-  // and the value holds a timestamp.
-  var Item = function(key, value) {
-    this.key_ = key;
-    this.value_ = value;
+  // Storage event target. IE8 will fire storage event on document, not window
+  // like other modern browsers.
+  var STORAGE_EVENT_TARGET = 'onstorage' in document ? document : window;
+
+  // Namespace object for wrapper methods related to DOM scripting, including
+  // browser normalization.
+  var dom = {
+    // Adds DOM event listener. (Assigned on init-time depending on browser
+    // capabilities.)
+    on: (function() {
+      if(window.addEventListener) {
+        return function(target, event, callback) {
+          target.addEventListener(event, callback, false);
+        };
+      }
+      return function(target, event, callback) {
+        target.attachEvent('on' + event, callback);
+      };
+    })(),
+
+    // Removes DOM event listener. (Assigned on init-time depending on
+    // browser capabilities.)
+    off: (function() {
+      if(window.removeEventListener) {
+        return function(target, event, callback) {
+          target.removeEventListener(event, callback, false);
+        };
+      }
+      return function(target, event, callback) {
+        target.detachEvent('on' + event, callback);
+      };
+    })()
   };
 
-  Item.prototype = {
+  var guid = function() {
+    var s4 = function() {
+      return Math.floor((1 + Math.random()) * 0x10000).toString(16)
+          .substring(1);
+    };
+
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() +
+        s4() + s4();
+  };
+
+  var itemProto = {
+    // Defaults
+    key: 'null',
+    value: 0,
+
     // Returns true if this item contains a message.
-    containsMessage: function() {
-      return this.key_.indexOf(MESSAGE_TAG) !== -1;
+    hasEvent: function() {
+      return this.key.indexOf(EVENT_TAG) !== -1;
     },
 
     // Returns true if this item contains a message listener.
-    containsMessageListener: function() {
-      return this.key_.indexOf(MESSAGE_LISTENER_TAG) !== -1;
+    hasEventHandler: function() {
+      return this.key.indexOf(EVENT_HANDLER_TAG) !== -1;
     },
 
     // Returns true if this item contains specified target id.
-    containsTargetId: function(targetId) {
-      return this.key_.indexOf(targetId) !== -1;
+    hasTargetId: function(targetId) {
+      return this.key.indexOf(targetId) !== -1;
+    },
+
+    parse: function() {
+      return JSON.parse(this.key);
+    },
+
+    stringify: function() {
+      return this.key;
     },
 
     // Returns true if this item is considered outdated.
     isDead: function() {
-      return +new Date() - parseInt(this.value_, 10) > ITEM_TTL_MS;
-    },
-
-    // Returns key of this item.
-    getKey: function() {
-      return this.key_;
+      return +new Date() - parseInt(this.value, 10) > ITEM_TTL_MS;
     }
   };
 
-  // StorageMessenger namespace object that will be exposed on the global window
-  // object.
-  var StorageMessenger = {
-    // Current version.
-    VERSION: '@VERSION@',
+  var transportProto = {
+    // Defaults
+    localStorage: localStorage,
+    dom: dom,
+    guid: guid,
+    ownTargetId: '',
+    eventHandler: null,
 
-    // Namespace object for methods related to DOM scripting browser
-    // normalization.
-    DOM: {
-      // Adds DOM event listener. (Assigned on init-time depending on browser
-      // capabilities.)
-      on: (function() {
-        if(window.addEventListener) {
-          return function(target, event, callback) {
-            target.addEventListener(event, callback, false);
-          };
-        }
-        return function(target, event, callback) {
-          target.attachEvent('on' + event, callback);
-        };
-      })(),
-
-      // Removes DOM event listener. (Assigned on init-time depending on
-      // browser capabilities.)
-      off: (function() {
-        if(window.removeEventListener) {
-          return function(target, event, callback) {
-            target.removeEventListener(event, callback, false);
-          };
-        }
-        return function(target, event, callback) {
-          target.detachEvent('on' + event, callback);
-        };
-      })()
+    dispatch: function(event) {
+      this.storeEventForOtherActiveEventHandlers(event);
     },
 
-    // Restores previous value of the global StorageMessenger variable.
-    noConflict: function() {
-      window.StorageMessenger = previousStorageMessenger_;
-      return this;
+    destroy: function() {
+      this.deregisterSelf();
+      this.dom.off(STORAGE_EVENT_TARGET, 'storage', this.handleStorageEvent);
+      this.dom.off(window, 'unload', this.handleUnloadEvent);
     },
 
-    // Generates version 4 GUID.
-    guid: function() {
-      var s4 = function() {
-        return Math.floor((1 + Math.random()) * 0x10000).toString(16)
-            .substring(1);
+    handleStorageEvent: function(event) {
+      if (event.key && !event.newValue) {
+        return;
+      }
+      setTimeout(this.handleOwnEvent.bind(this), 0);
+    },
+
+    handleUnloadEvent: function(event) {
+      this.destroy();
+    },
+
+    registerSelf: function() {
+      this.storeEventHandler(this.ownTargetId);
+      this.keepAliveInterval =
+          setInterval(this.storeEventHandler.bind(this, this.ownTargetId),
+              ITEM_TTL_MS);
+    },
+
+    deregisterSelf: function() {
+      this.forEachFilteredItem(this.isOwnEventHandler.bind(this),
+          this.remove.bind(this));
+      clearInterval(this.keepAliveInterval);
+    },
+
+    removeGarbage: function() {
+      this.forEachFilteredItem(this.isGarbage.bind(this),
+          this.remove.bind(this));
+    },
+
+    storeEventHandler: function(targetId) {
+      var eventHandler = {
+        tag: EVENT_HANDLER_TAG,
+        targetId: targetId
       };
+      this.localStorage.setItem(JSON.stringify(eventHandler), +new Date());
+    },
 
-      return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() +
-          s4() + s4();
+    storeEvent: function(event, item) {
+      this.localStorage.setItem(JSON.stringify({
+        eventId: this.guid(),
+        tag: EVENT_TAG,
+        targetId: item.parse().targetId,
+        event: event
+      }), +new Date());
+    },
+
+    handleOwnEvent: function() {
+      this.forEachFilteredItem(this.isOwnEvent.bind(this),
+          this.handleEvent.bind(this));
+    },
+
+    storeEventForOtherActiveEventHandlers: function(event) {
+      this.forEachFilteredItem(this.isOtherActiveEventHandler.bind(this),
+          this.storeEvent.bind(this, event));
+    },
+
+    remove: function(item) {
+      this.localStorage.removeItem(item.stringify());
+    },
+
+    handleEvent: function(item) {
+      this.invokeEventHandler(item.parse().event);
+      this.remove(item);
+    },
+
+    isOwnEvent: function(item) {
+      return item.hasEvent() && item.hasTargetId(this.ownTargetId);
+    },
+
+    isOtherActiveEventHandler: function(item) {
+      return item.hasEventHandler() && !item.hasTargetId(this.ownTargetId) &&
+          !item.isDead();
+    },
+
+    isOwnEventHandler: function(item) {
+      return item.hasEventHandler() && item.hasTargetId(this.ownTargetId);
+    },
+
+    isGarbage: function(item) {
+      return item.isDead();
+    },
+
+    invokeEventHandler: function(event) {
+      this.eventHandler && this.eventHandler(event);
+    },
+
+    forEachItem: function(callback) {
+      var i = this.localStorage.length;
+      var foundItem;
+
+      while(i--) {
+        foundItem = Object.create(itemProto);
+        foundItem.key = this.localStorage.key(i);
+        foundItem.value = this.localStorage.getItem(foundItem.key);
+        callback(foundItem);
+      }
+    },
+
+    forEachFilteredItem: function(filter, callback) {
+      this.forEachItem(function(item) {
+        filter(item) && callback(item)
+      });
     }
   };
 
-  // Creates an eventHub with specified transport mechanism. This constructor
-  // should not be used directly, instead use the
-  // StorageMessenger.EventHub.create builder function.
-  StorageMessenger.EventHub = function(transport) {
-    this.transport_ = transport;
-    this.eventListeners_ = [];
-  };
+  var eventHubProto = {
+    // defaults
+    eventHandlers: null,
+    transport: null,
 
-  // Creates an eventHub and wires up collaborators.
-  StorageMessenger.EventHub.create = function() {
-    var transport = StorageMessenger.Transport.create(localStorage);
-    var eventHub = new StorageMessenger.EventHub(transport);
+    handleEvent: function(event) {
+      this.eventHandlers.forEach(function(eventHandler) {
+        if (eventHandler.type == event.type) {
+          eventHandler.callback(event.params);
+        }
+      });
+    },
 
-    transport.setTransportDataListener(
-        eventHub.transportDataListener.bind(eventHub));
-
-    return eventHub;
-  };
-
-  StorageMessenger.EventHub.prototype = {
-    // Triggers an event that can be listened to in other browser windows with
-    // content loaded from the same domain.
-    trigger: function(event, params) {
-      var data = {
-        event: event,
+    trigger: function(type, params) {
+      this.transport.dispatch({
+        type: type,
         params: params
-      };
-      this.transport_.send(data);
+      });
     },
 
-    // Adds event listener.
-    on: function(event, callback) {
-      this.eventListeners_.push({
-        event: event,
+    on: function(type, callback) {
+      this.eventHandlers.push({
+        type: type,
         callback: callback
       });
     },
 
-    // Removes event listener. Listener will be removed if event and callback
-    // match added listener.
-    off: function(event, callback) {
-      var eventListener;
-      var i = this.eventListeners_.length;
+    off: function(type, callback) {
+      var eventHandler;
+      var i = this.eventHandlers.length;
       while(i--) {
-        eventListener = this.eventListeners_[i];
-        if (eventListener.event === event &&
-            eventListener.callback === callback) {
-          this.eventListeners_.splice(i, 1);
+        eventHandler = this.eventHandlers[i];
+        if (eventHandler.type === type &&
+            eventHandler.callback === callback) {
+          this.eventHandlers.splice(i, 1);
         }
       }
     },
 
-    // Listener for transport data. Invokes event listeners that match the
-    // passed data.
-    transportDataListener: function(data) {
-      this.eventListeners_.forEach(function(eventListener) {
-        if (eventListener.event === data.event) {
-          eventListener.callback(data.params);
-        }
-      });
+    destroy: function() {
+      this.transport.destroy();
     }
   };
 
-  // Creates transport. This constructor should not be used directly, instead
-  // use StorageMessenger.Transport.create builder function.
-  StorageMessenger.Transport = function(localStorage, targetId) {
-    this.localStorage_ = localStorage;
-    this.targetId_ = targetId;
-    this.transportDataListener_ = null;
-    this.keepAliveInterval_ = null;
-  };
+  // Composition root
+  var create = function() {
+    var transport = Object.create(transportProto);
+    var eventHub = Object.create(eventHubProto);
 
-  // Creates a transport, wires up collaborators and initializes transport.
-  StorageMessenger.Transport.create = function(localStorage) {
-    var targetId = StorageMessenger.guid();
-    var transport = new StorageMessenger.Transport(localStorage, targetId);
-    var storageEventTarget = 'onstorage' in document ? document : window;
+    eventHub.transport = transport;
+    eventHub.eventHandlers = [];
 
-    transport.registerOwnMessageListener();
+    transport.ownTargetId = guid();
+    transport.eventHandler = eventHub.handleEvent.bind(eventHub);
 
-    // Replace methods that are passed as callbacks with corresponding bound
-    // method, to facilitate removal and testing.
-    transport.storageListener = transport.storageListener.bind(transport);
-    transport.unloadListener = transport.unloadListener.bind(transport);
+    // Bind DOM event handlers so the handler can be removed at later stage.
+    transport.handleStorageEvent = transport.handleStorageEvent.bind(transport);
+    transport.handleUnloadEvent = transport.handleUnloadEvent.bind(transport);
 
-    StorageMessenger.DOM.on(storageEventTarget, 'storage',
-        transport.storageListener);
-    StorageMessenger.DOM.on(window, 'unload', transport.unloadListener);
+    dom.on(STORAGE_EVENT_TARGET, 'storage', transport.handleStorageEvent);
+    dom.on(window, 'unload', transport.handleUnloadEvent);
 
+    transport.registerSelf();
     transport.removeGarbage();
 
-    return transport;
+    // Return object with public methods of the event hub.
+    return {
+      on: eventHub.on.bind(eventHub),
+      off: eventHub.off.bind(eventHub),
+      trigger: eventHub.trigger.bind(eventHub),
+      destroy: eventHub.destroy.bind(eventHub)
+    };
   };
 
-  StorageMessenger.Transport.prototype = {
-    // Sends data.
-    send: function(data) {
-      this.storeMessageForOtherActiveMessageListeners_(data);
-    },
+  var noConflict = function() {
+    window.StorageMessenger = previousStorageMessenger;
+    return StorageMessenger;
+  }
 
-    // Sets transport listener.
-    setTransportDataListener: function(transportDataListener) {
-      this.transportDataListener_ = transportDataListener;
-    },
+  // Expose public API.
+  StorageMessenger.create = create;
+  StorageMessenger.noConflict = noConflict;
+  StorageMessenger.VERSION = VERSION;
 
-    //  Cleans up transport, including removing DOM event listeners and own
-    // entries in localStorage.
-    destroy: function() {
-      var storageEventTarget = 'onstorage' in document ? document : window;
-      this.deregisterOwnMessageListener_();
-      StorageMessenger.DOM.off(storageEventTarget, 'storage',
-          this.storageListener);
-      StorageMessenger.DOM.off(window, 'unload', this.unloadListener);
-    },
+  // Expose private parts that are relevant to unit test during development.
+  if (DEV_MODE) {
+    StorageMessenger.eventHubProto = eventHubProto;
+    StorageMessenger.transportProto = transportProto;
+  }
 
-    // Storage DOM event listener. Handles own messages found in localStorage.
-    storageListener: function(event) {
-      // Ignore events that have a key, but not a newValue, those
-      // will be caused by deleting a item in storage on non IE8 browsers.
-      if (event.key && !event.newValue) {
-        return;
-      }
-
-      // We need to wait until next event loop before handling own messages (ie.
-      // reading/writing from/to localStorage).
-      setTimeout(this.handleOwnMessage_.bind(this), 0);
-    },
-
-    // Unload DOM event listener. Destroys this transport. Will in particularly
-    // remove own entries in localStorage.
-    unloadListener: function() {
-      this.destroy();
-    },
-
-    // Stores own message listener in localStorage and updates timestamp on
-    // interval to keep message listener alive.
-    registerOwnMessageListener: function() {
-      this.storeMessageListener_(this.targetId_);
-      this.keepAliveInterval_ =
-          setInterval(this.storeMessageListener_.bind(this, this.targetId_),
-          ITEM_TTL_MS);
-    },
-
-    // Removes own message listener from localStorage and clears interval that
-    // keeps message listener alive.
-    deregisterOwnMessageListener_: function() {
-      this.forEachFilteredItem_(this.isOwnMessageListener_.bind(this),
-          this.remove_.bind(this));
-      clearInterval(this.keepAliveInterval_);
-    },
-
-    // Removes outdated items from localStorage.
-    removeGarbage: function() {
-      this.forEachFilteredItem_(this.isGarbage_.bind(this),
-          this.remove_.bind(this));
-    },
-
-    // Stores message listener in localStorage.
-    storeMessageListener_: function(targetId) {
-      var transportListener = {
-        tag: MESSAGE_LISTENER_TAG,
-        targetId: targetId
-      };
-      this.localStorage_.setItem(JSON.stringify(transportListener), +new Date());
-    },
-
-    // Stores message in localStorage.
-    storeMessage_: function(data, item) {
-      var listener = JSON.parse(item.getKey());
-      var message = {
-        messageId: StorageMessenger.guid(),
-        tag: MESSAGE_TAG,
-        targetId: listener.targetId,
-        data: data
-      };
-
-      this.localStorage_.setItem(JSON.stringify(message), +new Date());
-    },
-
-    // Handles any own messages found in localStorage.
-    handleOwnMessage_: function() {
-      this.forEachFilteredItem_(this.isOwnMessage_.bind(this),
-          this.handleMessage_.bind(this));
-    },
-
-    // Stores a message in localStorage for each active message listener
-    // (excluding self).
-    storeMessageForOtherActiveMessageListeners_: function(data) {
-      this.forEachFilteredItem_(
-          this.isOtherActiveMessageListener_.bind(this),
-          this.storeMessage_.bind(this, data));
-    },
-
-    // Removes specified item from localStorage.
-    remove_: function(item) {
-      this.localStorage_.removeItem(item.getKey());
-    },
-
-    // Invokes transport listener with message data and removes message from
-    // localStorage.
-    handleMessage_: function(item) {
-      var message = JSON.parse(item.getKey());
-      this.invokeTransportListener_(message.data);
-      this.remove_(item);
-    },
-
-    // Returns true if specified item contains own message.
-    isOwnMessage_: function(item) {
-      return item.containsMessage() &&
-          item.containsTargetId(this.targetId_);
-    },
-
-    // Returns true if specified item contains other active message listener.
-    isOtherActiveMessageListener_: function(item) {
-      return item.containsMessageListener() &&
-          !item.containsTargetId(this.targetId_) && !item.isDead();
-    },
-
-    // Returns true if specified item contains own message listener.
-    isOwnMessageListener_: function(item) {
-      return item.containsMessageListener() &&
-          item.containsTargetId(this.targetId_);
-    },
-
-    // Returns true if specified item is considered garbage.
-    isGarbage_: function(item) {
-      return item.isDead();
-    },
-
-    // Invokes listener with message data.
-    invokeTransportListener_: function(data) {
-      if (this.transportDataListener_) {
-        this.transportDataListener_(data);
-      }
-    },
-
-    // Invokes specified callback once for each item in storage.
-    forEachItem_: function(callback) {
-      var i = this.localStorage_.length;
-      var key;
-      var value;
-
-      // Iterate backwards since callback might remove items.
-      while(i--) {
-        key = this.localStorage_.key(i);
-        value = this.localStorage_.getItem(key);
-        callback(new Item(key, value));
-      }
-    },
-
-    // Invokes specified callback once for each item in localStorage that passes
-    // specified filter.
-    forEachFilteredItem_: function(filter, callback) {
-      this.forEachItem_(function(item) {
-        if (filter(item)) {
-          callback(item);
-        }
-      });
-    }
-  };
-
-  // Export StorageMessenger to global object.
+  // Export StorageMessenger on global object.
   window.StorageMessenger = StorageMessenger;
-})(window, document);
+}).call(this);
