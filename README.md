@@ -49,13 +49,14 @@ Integration tests are built on the JavaScript bindings for Selenium WebDriver. T
 
 The integration tests can be run without the standalone Selenium Server by downloading the [ChromeDriver](https://code.google.com/p/chromedriver/), which is natively supported by Selenium WebDriver. Make sure the executable is available on `PATH` and run the test as follows:
 
-`npm test`
+`node_modules/mocha/bin/mocha -R list --recursive test/integration/spec`
 
 Other drivers (e.g. Firefox, Internet Explorer, and Safari), require the standalone Selenium server. To run the tests against multiple browsers, download the [Selenium server](https://code.google.com/p/selenium/downloads/list) and specify its location through the `SELENIUM_SERVER_JAR` environment variable. Use the `SELENIUM_BROWSER` environment variable to define a comma-separated list of browsers to test against. For example:
 
 ```
 export SELENIUM_SERVER_JAR=~/java/selenium-server-standalone-2.37.0.jar \
-SELENIUM_BROWSER=firefox,chrome,safari &&  npm test
+SELENIUM_BROWSER=firefox,chrome,safari &&  node_modules/mocha/bin/mocha -R \
+list --recursive test/integration/spec
 ```
 
 Note that the browser's popup blocker might need to be disabled manually to make the tests pass.
