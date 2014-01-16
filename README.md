@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/claudijo/storage-messenger.png?branch=master)](https://travis-ci.org/claudijo/storage-messenger)
+
 StorageMessenger.js
 ===================
 StorageMessenger.js is a JavaScript micro-library that utilizes HTML5 localStorage as transport mechanism for passing messages between browser windows with content loaded from the same domain.
