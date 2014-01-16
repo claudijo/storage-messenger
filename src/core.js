@@ -214,13 +214,13 @@ if (typeof DEV_MODE === 'undefined') {
 
     forEachItem: function(callback) {
       var i = this.localStorage.length;
-      var foundItem;
+      var item;
 
       while(i--) {
-        foundItem = Object.create(itemProto);
-        foundItem.key = this.localStorage.key(i);
-        foundItem.value = this.localStorage.getItem(foundItem.key);
-        callback(foundItem);
+        item = Object.create(itemProto);
+        item.key = this.localStorage.key(i);
+        item.value = this.localStorage.getItem(item.key);
+        callback(item);
       }
     },
 
