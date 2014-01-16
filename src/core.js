@@ -288,7 +288,8 @@ if (typeof DEV_MODE === 'undefined') {
     transport.ownTargetId = guid();
     transport.eventHandler = eventHub.handleEvent.bind(eventHub);
 
-    // Bind DOM event handlers so the handler can be removed at later stage.
+    // Bind and reassign DOM event handlers, so that they have correct receiver
+    // and can be removed after being added.
     transport.handleStorageEvent = transport.handleStorageEvent.bind(transport);
     transport.handleUnloadEvent = transport.handleUnloadEvent.bind(transport);
 
