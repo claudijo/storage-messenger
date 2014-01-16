@@ -16,7 +16,7 @@ Usage
 StorageMessenger.js exposes a global `StorageMessenger` namespace object once loaded.
 
 ```js
-// Create a transport instance.
+// Create a Storage Messenger event hub.
 var eventHub = StorageMessenger.create();
 
 // Trigger event in one browser window, optionally passing params.
