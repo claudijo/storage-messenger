@@ -13,14 +13,14 @@ if (typeof DEV_MODE === 'undefined') {
 
   var previousStorageMessenger = window.StorageMessenger;
 
-  // Unique string that identifies messages in localStorage items.
+  // Unique string that identifies events in localStorage items.
   var EVENT_TAG = 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9';
 
-  // Unique string that identifies message listeners in localStorage items.
+  // Unique string that identifies event handlers in localStorage items.
   var EVENT_HANDLER_TAG = '8cc00beb-0943-41e8-9bbf-a74f91e3679e';
 
-  // Number of milliseconds before a item found in localStorage is considered
-  // garbage.
+  // Number of milliseconds before an event or event handler found in
+  // local storage is considered garbage.
   var ITEM_TTL_MS = 400;
 
   // Storage event target. IE8 will fire storage event on document, not window
@@ -66,6 +66,11 @@ if (typeof DEV_MODE === 'undefined') {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() +
         s4() + s4();
   };
+
+  var noConflict = function() {
+    window.StorageMessenger = previousStorageMessenger;
+    return StorageMessenger;
+  }
 
   var itemProto = {
     // Defaults
@@ -297,11 +302,6 @@ if (typeof DEV_MODE === 'undefined') {
       destroy: eventHub.destroy.bind(eventHub)
     };
   };
-
-  var noConflict = function() {
-    window.StorageMessenger = previousStorageMessenger;
-    return StorageMessenger;
-  }
 
   // Expose public API.
   StorageMessenger.create = create;
