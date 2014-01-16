@@ -15,7 +15,10 @@ module.exports = function(grunt) {
         eqeqeq: true,
         eqnull: true,
         browser: true,
-        ignores: ['test/integration/selenium-webdriver-extract/**/*.js']
+        ignores: [
+          'test/integration/selenium-webdriver-extract/**/*.js',
+          'test/unit/coverage/**/*.js'
+        ]
       },
       beforeconcat: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
       afterconcat: ['<%= pkg.name %>.js']
