@@ -173,7 +173,7 @@ describe('transport', function() {
     it('should remove outdated event', function() {
       transport.removeGarbage();
       expect(fakeLocalStorage.removeItem).was.calledWith(OTHER_EVENT);
-    })
+    });
 
     it('should remove inactive event handler', function() {
       transport.removeGarbage();
@@ -199,7 +199,7 @@ describe('transport', function() {
 
       transport.dom = {
         off: sandbox.spy()
-      }
+      };
     });
 
     it('should remove DOM storage event handler', function() {

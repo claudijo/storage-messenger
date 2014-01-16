@@ -70,7 +70,7 @@ if (typeof DEV_MODE === 'undefined') {
   var noConflict = function() {
     window.StorageMessenger = previousStorageMessenger;
     return StorageMessenger;
-  }
+  };
 
   var itemProto = {
     // Defaults
@@ -207,7 +207,9 @@ if (typeof DEV_MODE === 'undefined') {
     },
 
     invokeEventHandler: function(event) {
-      this.eventHandler && this.eventHandler(event);
+      if(this.eventHandler) {
+        this.eventHandler(event);
+      }
     },
 
     forEachItem: function(callback) {
@@ -224,7 +226,9 @@ if (typeof DEV_MODE === 'undefined') {
 
     forEachFilteredItem: function(filter, callback) {
       this.forEachItem(function(item) {
-        filter(item) && callback(item)
+        if (filter(item)) {
+          callback(item);
+        }
       });
     }
   };
@@ -236,7 +240,7 @@ if (typeof DEV_MODE === 'undefined') {
 
     handleEvent: function(event) {
       this.eventHandlers.forEach(function(eventHandler) {
-        if (eventHandler.type == event.type) {
+        if (eventHandler.type === event.type) {
           eventHandler.callback(event.params);
         }
       });

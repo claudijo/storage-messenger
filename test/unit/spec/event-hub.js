@@ -50,7 +50,7 @@ describe('evenHub', function() {
     beforeEach(function() {
       eventHub.transport = {
         dispatch: sandbox.spy()
-      }
+      };
     });
 
     it('should dispatch events to transport', function() {
@@ -74,7 +74,7 @@ describe('evenHub', function() {
       expect(eventHub.eventHandlers[0]).to.eql({
         type: 'foo',
         callback: callback
-      })
+      });
     });
   });
 
@@ -110,12 +110,12 @@ describe('evenHub', function() {
     beforeEach(function() {
       eventHub.transport = {
         destroy: sandbox.spy()
-      }
+      };
     });
 
     it('should destroy transport', function() {
       eventHub.destroy();
       expect(eventHub.transport.destroy).was.called();
-    })
+    });
   });
 });
