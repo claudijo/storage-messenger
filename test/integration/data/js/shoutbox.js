@@ -37,7 +37,7 @@
   var STORAGE_TRANSPORT_EVENT_TYPE = 'message';
 
   // Storage transport
-  var eventHub = StorageMessenger.EventHub.create();
+  var eventHub = StorageMessenger.create();
 
   // Send message using storage transport
   var sendMessage = function(event) {
