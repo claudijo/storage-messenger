@@ -200,7 +200,7 @@ describe('transport', function() {
       transport.dom = {
         off: sandbox.spy()
       }
-    })
+    });
 
     it('should remove DOM storage event handler', function() {
       transport.destroy();
@@ -227,6 +227,17 @@ describe('transport', function() {
       transport.destroy();
       clock.tick(400);
       expect(fakeLocalStorage.setItem).was.calledTwice();
+    });
+  });
+
+  describe('unloading page', function() {
+    beforeEach(function() {
+      sandbox.stub(transport, 'destroy');
+    });
+
+    it('should call destroy on page unload', function() {
+      transport.handleUnloadEvent();
+      expect(transport.destroy).was.called();
     });
   });
 
