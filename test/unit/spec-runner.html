@@ -17,20 +17,17 @@
 <script>mocha.setup('bdd')</script>
 
 <!-- Spec helpers -->
-<script src="spec-helper/defined-global-storage-messenger.js"></script>
-<!--<script src="spec-helper/guid-matcher.js"></script>-->
 <script src="spec-helper/fake-local-storage.js"></script>
 <script src="spec-helper/sinon-expect.js"></script>
 
 <!-- Source files-->
-<script type="text/javascript" src="../../src/polyfill/bind.js"></script>
-<script type="text/javascript" src="../../src/polyfill/foreach.js"></script>
-<script type="text/javascript" src="../../src/core.js"></script>
+<script src="../../src/polyfill/bind.js"></script>
+<script src="../../src/polyfill/foreach.js"></script>
+<script src="../../src/core.js"></script>
 
 <!-- Spec files -->
-<script src="spec/storage-messenger.js"></script>
-<script src="spec/storage-messenger-event-hub.js"></script>
-<script src="spec/storage-messenger-transport.js"></script>
+<script src="spec/event-hub.js"></script>
+<script src="spec/transport.js"></script>
 
 <script>
   mocha.checkLeaks();

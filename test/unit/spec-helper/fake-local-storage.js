@@ -1,6 +1,6 @@
 var FakeLocalStorage = function(items, keys, length) {
-  this.keys_ = keys;
-  this.items_ = items;
+  this.__keys__ = keys;
+  this.__items__ = items;
   this.length = length;
 };
 
@@ -9,7 +9,6 @@ FakeLocalStorage.create = function(items) {
   items = items || {};
 
   for (var key in items) {
-    console.log(key);
     keys.push(key);
   }
   return new FakeLocalStorage(items, keys, keys.length);
@@ -17,26 +16,26 @@ FakeLocalStorage.create = function(items) {
 
 FakeLocalStorage.prototype = {
   setItem: function(key, value) {
-    if (!this.items_.hasOwnProperty(key)) {
-      this.keys_.push(key);
+    if (!this.__items__.hasOwnProperty(key)) {
+      this.__keys__.push(key);
     }
-    this.items_[key] = value;
-    this.length = this.keys_.length;
+    this.__items__[key] = value;
+    this.length = this.__keys__.length;
   },
   getItem: function(key) {
-    return this.items_[key];
+    return this.__items__[key];
   },
   key: function(index) {
-    return this.keys_[index];
+    return this.__keys__[index];
   },
   removeItem: function(key) {
-    var i = this.keys_.length;
-    delete this.items_[key];
+    var i = this.__keys__.length;
+    delete this.__items__[key];
     while(i--) {
-      if (key === this.keys_[i]) {
-        this.keys_.splice(i, 1);
+      if (key === this.__keys__[i]) {
+        this.__keys__.splice(i, 1);
       }
     }
-    this.length = this.keys_.length;
+    this.length = this.__keys__.length;
   }
 };
