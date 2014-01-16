@@ -13,10 +13,10 @@ if (typeof DEV_MODE === 'undefined') {
 
   var previousStorageMessenger = window.StorageMessenger;
 
-  // Unique string that identifies events in localStorage items.
+  // Unique string that identifies events in local storage.
   var EVENT_TAG = 'b6297eba-31e4-11e3-8cf6-ce3f5508acd9';
 
-  // Unique string that identifies event handlers in localStorage items.
+  // Unique string that identifies event handlers in local storage.
   var EVENT_HANDLER_TAG = '8cc00beb-0943-41e8-9bbf-a74f91e3679e';
 
   // Number of milliseconds before an event or event handler found in
