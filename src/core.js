@@ -1,16 +1,32 @@
 if (typeof DEV_MODE === 'undefined') {
   DEV_MODE = true;
 }
+//    StorageMessenger.js is a JavaScript micro-library that utilizes W3C Web
+//    Storage (localStorage) as a transport mechanism for message passing
+//    between browser windows with content loaded from the same domain.
+//    (c) 2013-2014 Claudijo Borovic <claudijo.borovic@gmail.com>
+//    StorageMessenger.js may be freely distributed under the The MIT License.
 
 (function() {
   'use strict';
 
-  var StorageMessenger = {};
+  // Initial Setup
+  // -------------
+
+  // Local reference to the gloabal `window` object.
   var window = this;
+
+  // Local reference to the `document` object contained in `window`.
   var document = this.document;
 
+  // The top-level namespace that will exported to the global `window` object.
+  var StorageMessenger = {};
+
+  // Current version.
   var VERSION = '@VERSION@';
 
+  // Save the previous value of the gloabl `StorageMessenger` variable, so it
+  // can be restored later on, if `noConflict`is used.
   var previousStorageMessenger = window.StorageMessenger;
 
   // Unique string that identifies events in local storage.
@@ -23,12 +39,12 @@ if (typeof DEV_MODE === 'undefined') {
   // local storage is considered garbage.
   var ITEM_TTL_MS = 400;
 
-  // Storage event target. IE8 will fire storage event on document, not window
-  // like other modern browsers.
+  // Storage event target. IE8 will fire storage event on `document`, not
+  // `window` like other modern browsers.
   var STORAGE_EVENT_TARGET = 'onstorage' in document ? document : window;
 
-  // Namespace object for wrapper methods related to DOM scripting, including
-  // browser normalization.
+  // Namespace for helper methods related to DOM scripting, including browser
+  // normalization.
   var dom = {
     // Adds DOM event listener. (Assigned on init-time depending on browser
     // capabilities.)
@@ -57,6 +73,7 @@ if (typeof DEV_MODE === 'undefined') {
     })()
   };
 
+  // Generates a version 4 GUID.
   var guid = function() {
     var s4 = function() {
       return Math.floor((1 + Math.random()) * 0x10000).toString(16)
@@ -67,22 +84,36 @@ if (typeof DEV_MODE === 'undefined') {
         s4() + s4();
   };
 
+  // Restores previous value of the global StorageMessenger variable. Returns
+  // a reference to this `StorageMessenger` object.
   var noConflict = function() {
     window.StorageMessenger = previousStorageMessenger;
     return StorageMessenger;
   };
 
+  // Prototype objects
+  // -----------------
+
+  // Prototype for an item object, which wraps a `localStorage` item. Items
+  // should be discarded unless it holds an event or an event handler, together
+  // with a timestamp.
   var itemProto = {
-    // Defaults
+    // Set to the key of a `localStorage` item. A valid item holds JSON data
+    // representing an event or an event handler. The default value must be
+    // be overwritten when creating a new instance.
     key: 'null',
+
+    // Set to the value of a `localStorage`item. A valid item holds a number
+    // representing the timestamp for when the item was created or refreshed.
+    // The default value must be overwritten when creating a new instance.
     value: 0,
 
-    // Returns true if this item contains a message.
+    // Returns true if this item contains an event.
     hasEvent: function() {
       return this.key.indexOf(EVENT_TAG) !== -1;
     },
 
-    // Returns true if this item contains a message listener.
+    // Returns true if this item contains an event handler.
     hasEventHandler: function() {
       return this.key.indexOf(EVENT_HANDLER_TAG) !== -1;
     },
@@ -92,10 +123,12 @@ if (typeof DEV_MODE === 'undefined') {
       return this.key.indexOf(targetId) !== -1;
     },
 
+    // Returns parsed JSON data.
     parse: function() {
       return JSON.parse(this.key);
     },
 
+    // Returns JSON data.
     stringify: function() {
       return this.key;
     },
@@ -106,24 +139,39 @@ if (typeof DEV_MODE === 'undefined') {
     }
   };
 
+  // Prototype for a transport object.
   var transportProto = {
-    // Defaults
+    // Internal reference to `localStorage`.
     localStorage: localStorage,
+
+    // Internal reference to the DOM helper object.
     dom: dom,
+
+    // Internal reference to the GUID generator.
     guid: guid,
+
+    // String specifying this even handlers unique id.
     ownTargetId: '',
+
+    // Function to call when a relevant event is dispatched on `localStorage`.
     eventHandler: null,
 
+    // Stores an event targeted at other event handlers registered in
+    // `localStorage`.
     dispatch: function(event) {
       this.storeEventForOtherActiveEventHandlers(event);
     },
 
+    // Cleans up transport, including removing DOM event listeners and own
+    // entries in localStorage.
     destroy: function() {
-      this.deregisterSelf();
       this.dom.off(STORAGE_EVENT_TARGET, 'storage', this.handleStorageEvent);
       this.dom.off(window, 'unload', this.handleUnloadEvent);
+      this.deregisterSelf();
     },
 
+    // Handles DOM storage events. Events found in `localStorage` will be
+    // handled if they are targeted at this event handler.
     handleStorageEvent: function(event) {
       if (event.key && !event.newValue) {
         return;
@@ -131,10 +179,13 @@ if (typeof DEV_MODE === 'undefined') {
       setTimeout(this.handleOwnEvent.bind(this), 0);
     },
 
+    // Handles DOM unload events. Cleans up the transport.
     handleUnloadEvent: function(event) {
       this.destroy();
     },
 
+    // Stores own event handler in `localStorage` and updates timestamp on
+    // interval to keep event handler alive.
     registerSelf: function() {
       this.storeEventHandler(this.ownTargetId);
       this.keepAliveInterval =
@@ -142,17 +193,21 @@ if (typeof DEV_MODE === 'undefined') {
               ITEM_TTL_MS);
     },
 
+    // Removes own event handler from `localStorage` and clears interval that
+    // keeps event handler alive.
     deregisterSelf: function() {
       this.forEachFilteredItem(this.isOwnEventHandler.bind(this),
           this.remove.bind(this));
       clearInterval(this.keepAliveInterval);
     },
 
+    // Removes outdated items from localStorage.
     removeGarbage: function() {
       this.forEachFilteredItem(this.isGarbage.bind(this),
           this.remove.bind(this));
     },
 
+    // Stores specified event handler in `localStorage`.
     storeEventHandler: function(targetId) {
       var eventHandler = {
         tag: EVENT_HANDLER_TAG,
@@ -161,6 +216,8 @@ if (typeof DEV_MODE === 'undefined') {
       this.localStorage.setItem(JSON.stringify(eventHandler), +new Date());
     },
 
+    // Stores specified event in `localStorage` targeted at event handler found
+    // in specified item.
     storeEvent: function(event, item) {
       this.localStorage.setItem(JSON.stringify({
         eventId: this.guid(),
@@ -170,48 +227,61 @@ if (typeof DEV_MODE === 'undefined') {
       }), +new Date());
     },
 
+    // Handles own events.
     handleOwnEvent: function() {
       this.forEachFilteredItem(this.isOwnEvent.bind(this),
           this.handleEvent.bind(this));
     },
 
+    // Stores specified event with other event handlers as targets.
     storeEventForOtherActiveEventHandlers: function(event) {
       this.forEachFilteredItem(this.isOtherActiveEventHandler.bind(this),
           this.storeEvent.bind(this, event));
     },
 
+    // Removes item representation in `localStorage`.
     remove: function(item) {
       this.localStorage.removeItem(item.stringify());
     },
 
+    // Handles event found in specified item.
     handleEvent: function(item) {
       this.invokeEventHandler(item.parse().event);
       this.remove(item);
     },
 
+    // Returns true if specified item contains an event that is targeted at this
+    // event handler.
     isOwnEvent: function(item) {
       return item.hasEvent() && item.hasTargetId(this.ownTargetId);
     },
 
+    // Returns true if specified item contains an event handler that is not
+    // dead, excluding self.
     isOtherActiveEventHandler: function(item) {
       return item.hasEventHandler() && !item.hasTargetId(this.ownTargetId) &&
           !item.isDead();
     },
 
+    // Returns true if specified item contains own event handler.
     isOwnEventHandler: function(item) {
       return item.hasEventHandler() && item.hasTargetId(this.ownTargetId);
     },
 
+    // Returns true if specified item contains an event or an event handler that
+    // in considered garbage.
     isGarbage: function(item) {
-      return item.isDead();
+      return (item.hasEvent() || item.hasEventHandler()) && item.isDead();
     },
 
+    // Calls this event handler with specified event.
     invokeEventHandler: function(event) {
       if(this.eventHandler) {
         this.eventHandler(event);
       }
     },
 
+    // Invokes specified callback for each item in `localStorage`.
     forEachItem: function(callback) {
       var i = this.localStorage.length;
       var item;
@@ -224,6 +294,8 @@ if (typeof DEV_MODE === 'undefined') {
       }
     },
 
+    // Invokes specified callback for each item in `localStorage` that passes
+    // the specified filter.
     forEachFilteredItem: function(filter, callback) {
       this.forEachItem(function(item) {
         if (filter(item)) {
@@ -233,11 +305,18 @@ if (typeof DEV_MODE === 'undefined') {
     }
   };
 
+  // Prototype for an event hub object.
   var eventHubProto = {
-    // defaults
-    eventHandlers: null,
+    // Array with event handlers. The default value must be overwritten when
+    // creating a new instance.
+    eventHandlers: [],
+
+    // Transport used for dispatching events. The default value must be
+    // overwritten when creating a new instance.
     transport: null,
 
+    // Calls registered event handlers with specified event params if they
+    // listens specified to event type.
     handleEvent: function(event) {
       this.eventHandlers.forEach(function(eventHandler) {
         if (eventHandler.type === event.type) {
@@ -246,6 +325,7 @@ if (typeof DEV_MODE === 'undefined') {
       });
     },
 
+    // Dispatches event on transport with specified type and params.
     trigger: function(type, params) {
       this.transport.dispatch({
         type: type,
@@ -253,6 +333,7 @@ if (typeof DEV_MODE === 'undefined') {
       });
     },
 
+    // Adds event handler.
     on: function(type, callback) {
       this.eventHandlers.push({
         type: type,
@@ -260,6 +341,7 @@ if (typeof DEV_MODE === 'undefined') {
       });
     },
 
+    // Removes event handler.
     off: function(type, callback) {
       var eventHandler;
       var i = this.eventHandlers.length;
@@ -272,12 +354,17 @@ if (typeof DEV_MODE === 'undefined') {
       }
     },
 
+    // Cleans up the transport.
     destroy: function() {
       this.transport.destroy();
     }
   };
 
   // Composition root
+  // ----------------
+
+  // Creates a new event hub and transport. Returns public methods of the event
+  // hub.
   var create = function() {
     var transport = Object.create(transportProto);
     var eventHub = Object.create(eventHubProto);
@@ -308,12 +395,14 @@ if (typeof DEV_MODE === 'undefined') {
     };
   };
 
-  // Expose public API.
+  // Public API
+  // ----------
+
+  // Expose public methods.
   StorageMessenger.create = create;
   StorageMessenger.noConflict = noConflict;
   StorageMessenger.VERSION = VERSION;
 
-  // Expose private parts that are relevant to unit test during development.
   if (DEV_MODE) {
     StorageMessenger.eventHubProto = eventHubProto;
     StorageMessenger.transportProto = transportProto;
