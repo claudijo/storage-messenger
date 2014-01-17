@@ -25,8 +25,8 @@ if (typeof DEV_MODE === 'undefined') {
   // Current version.
   var VERSION = '@VERSION@';
 
-  // Save the previous value of the gloabl `StorageMessenger` variable, so it
-  // can be restored later on, if `noConflict`is used.
+  // Previous value of the gloabl `StorageMessenger` variable, so it can be
+  // restored later on, if `noConflict` is used.
   var previousStorageMessenger = window.StorageMessenger;
 
   // Unique string that identifies events in local storage.
@@ -46,7 +46,7 @@ if (typeof DEV_MODE === 'undefined') {
   // Namespace for helper methods related to DOM scripting, including browser
   // normalization.
   var dom = {
-    // Adds DOM event listener. (Assigned on init-time depending on browser
+    // Adds DOM event handler. (Assigned on init-time depending on browser
     // capabilities.)
     on: (function() {
       if(window.addEventListener) {
@@ -59,7 +59,7 @@ if (typeof DEV_MODE === 'undefined') {
       };
     })(),
 
-    // Removes DOM event listener. (Assigned on init-time depending on
+    // Removes DOM event handler. (Assigned on init-time depending on
     // browser capabilities.)
     off: (function() {
       if(window.removeEventListener) {
@@ -84,28 +84,28 @@ if (typeof DEV_MODE === 'undefined') {
         s4() + s4();
   };
 
-  // Restores previous value of the global StorageMessenger variable. Returns
+  // Restores previous value of the global `StorageMessenger` variable. Returns
   // a reference to this `StorageMessenger` object.
   var noConflict = function() {
     window.StorageMessenger = previousStorageMessenger;
     return StorageMessenger;
   };
 
-  // Prototype objects
+  // Prototype Objects
   // -----------------
 
   // Prototype for an item object, which wraps a `localStorage` item. Items
   // should be discarded unless it holds an event or an event handler, together
   // with a timestamp.
   var itemProto = {
-    // Set to the key of a `localStorage` item. A valid item holds JSON data
+    // Set to the key of an item in local storage. A valid item holds JSON data
     // representing an event or an event handler. The default value must be
     // be overwritten when creating a new instance.
     key: 'null',
 
-    // Set to the value of a `localStorage`item. A valid item holds a number
-    // representing the timestamp for when the item was created or refreshed.
-    // The default value must be overwritten when creating a new instance.
+    // Set to the value of an item in local storage. A valid item holds a number
+    // representing the timestamp when the item was created or refreshed. The
+    // default value must be overwritten when creating a new instance.
     value: 0,
 
     // Returns true if this item contains an event.
@@ -144,10 +144,10 @@ if (typeof DEV_MODE === 'undefined') {
     // Internal reference to `localStorage`.
     localStorage: localStorage,
 
-    // Internal reference to the DOM helper object.
+    // Internal reference to the `dom` helper object.
     dom: dom,
 
-    // Internal reference to the GUID generator.
+    // Internal reference to the `guid` generator.
     guid: guid,
 
     // String specifying this even handlers unique id.
@@ -162,7 +162,7 @@ if (typeof DEV_MODE === 'undefined') {
       this.storeEventForOtherActiveEventHandlers(event);
     },
 
-    // Cleans up transport, including removing DOM event listeners and own
+    // Cleans up transport, including removing DOM event handlers and own
     // entries in localStorage.
     destroy: function() {
       this.dom.off(STORAGE_EVENT_TARGET, 'storage', this.handleStorageEvent);
@@ -360,7 +360,7 @@ if (typeof DEV_MODE === 'undefined') {
     }
   };
 
-  // Composition root
+  // Composition Root
   // ----------------
 
   // Creates a new event hub and transport. Returns public methods of the event
@@ -395,8 +395,8 @@ if (typeof DEV_MODE === 'undefined') {
     };
   };
 
-  // Public API
-  // ----------
+  // Public API and Exports
+  // ----------------------
 
   // Expose public methods.
   StorageMessenger.create = create;
