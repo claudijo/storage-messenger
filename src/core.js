@@ -186,7 +186,7 @@
     },
 
     // Handles DOM unload events. Cleans up the transport.
-    handleUnloadEvent: function(event) {
+    handleUnloadEvent: function() {
       this.destroy();
     },
 
