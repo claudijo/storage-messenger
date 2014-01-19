@@ -1,3 +1,6 @@
+// Function.prototype.bind Polyfill
+// --------------------------------
+
 // Allowing use of much of the functionality of Function.prototype.bind in
 // implementations that do not natively support it.
 // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind

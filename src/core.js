@@ -8,7 +8,7 @@
   'use strict';
 
   // Initial Setup
-  // -------------
+  // =============
 
   // Local reference to the gloabal `window` object.
   var window = this;
@@ -40,6 +40,9 @@
   // `window` like other modern browsers.
   var STORAGE_EVENT_TARGET = 'onstorage' in document ? document : window;
 
+  // DOM Scripting Helper
+  // --------------------
+
   // Namespace for helper methods related to DOM scripting, including browser
   // normalization.
   var dom = {
@@ -70,6 +73,9 @@
     })()
   };
 
+  // GUID Generator
+  // --------------
+
   // Generates a version 4 GUID.
   var guid = function() {
     var s4 = function() {
@@ -88,21 +94,21 @@
     return StorageMessenger;
   };
 
-  // Prototype Objects
-  // -----------------
+  // Item Prototype
+  // --------------
 
   // Prototype for an item object, which wraps a `localStorage` item. Items
-  // should be discarded unless it holds an event or an event handler, together
+  // should be discarded unless they hold an event or an event handler, together
   // with a timestamp.
   var itemProto = {
     // Set to the key of an item in local storage. A valid item holds JSON data
     // representing an event or an event handler. The default value must be
-    // be overwritten when creating a new instance.
+    // be overwritten when creating a new item.
     key: 'null',
 
     // Set to the value of an item in local storage. A valid item holds a number
     // representing the timestamp when the item was created or refreshed. The
-    // default value must be overwritten when creating a new instance.
+    // default value must be overwritten when creating a new item.
     value: 0,
 
     // Returns true if this item contains an event.
@@ -135,6 +141,9 @@
       return +new Date() - parseInt(this.value, 10) > ITEM_TTL_MS;
     }
   };
+
+  // Transport Prototype
+  // -------------------
 
   // Prototype for a transport object.
   var transportProto = {
@@ -302,6 +311,9 @@
     }
   };
 
+  // Event Hub Prototype
+  // -------------------
+
   // Prototype for an event hub object.
   var eventHubProto = {
     // Array with event handlers. The default value must be overwritten when
@@ -312,8 +324,8 @@
     // overwritten when creating a new instance.
     transport: null,
 
-    // Calls registered event handlers with specified event params if they
-    // listens specified to event type.
+    // Calls registered event handlers for type in specified event with params
+    // in specified event.
     handleEvent: function(event) {
       this.eventHandlers.forEach(function(eventHandler) {
         if (eventHandler.type === event.type) {
@@ -360,8 +372,8 @@
   // Composition Root
   // ----------------
 
-  // Creates an eventHub and a transport. Return object with the public methods
-  // of the eventHub.
+  // Creates an eventHub and a transport. Wires up collaborators. Return object
+  // with the public methods of the eventHub.
   var create = function() {
     var transport = Object.create(transportProto);
     var eventHub = Object.create(eventHubProto);
@@ -383,7 +395,7 @@
     transport.registerSelf();
     transport.removeGarbage();
 
-    // Return object with public methods of the event hub.
+    // Return object with the public methods of the event hub.
     return {
       on: eventHub.on.bind(eventHub),
       off: eventHub.off.bind(eventHub),
@@ -407,6 +419,6 @@
   StorageMessenger.transportProto = transportProto;
   // @endexclude
 
-  // Export StorageMessenger on global object.
+  // Export StorageMessenger to global object.
   window.StorageMessenger = StorageMessenger;
 }).call(this);

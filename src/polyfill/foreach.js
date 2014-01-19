@@ -1,3 +1,6 @@
+// Array.prototype.forEach Polyfill
+// --------------------------------
+
 // Allowing use of Array.prototype.forEach in implementations which do not
 // natively support it.
 // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach

@@ -1,3 +1,6 @@
+// Object.create Polyfill
+// ----------------------
+
 // Allowing use of much of the functionality of Object.create in implementations
 // that do not natively support it.
 // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
