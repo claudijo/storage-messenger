@@ -1,11 +1,8 @@
-if (typeof DEV_MODE === 'undefined') {
-  DEV_MODE = true;
-}
-//    StorageMessenger.js is a JavaScript micro-library that utilizes W3C Web
-//    Storage (localStorage) as a transport mechanism for message passing
-//    between browser windows with content loaded from the same domain.
-//    (c) 2013-2014 Claudijo Borovic <claudijo.borovic@gmail.com>
-//    StorageMessenger.js may be freely distributed under the The MIT License.
+//      StorageMessenger.js is a JavaScript micro-library that utilizes W3C Web
+//      Storage (localStorage) as a transport mechanism for message passing
+//      between browser windows with content loaded from the same domain.
+//      (c) 2013-2014 Claudijo Borovic <claudijo.borovic@gmail.com>
+//      StorageMessenger.js may be freely distributed under the The MIT License.
 
 (function() {
   'use strict';
@@ -153,10 +150,10 @@ if (typeof DEV_MODE === 'undefined') {
     // String specifying this even handlers unique id.
     ownTargetId: '',
 
-    // Function to call when a relevant event is dispatched on `localStorage`.
+    // Function to call when an event is dispatched on `localStorage`.
     eventHandler: null,
 
-    // Stores an event targeted at other event handlers registered in
+    // Stores an event targeted at other event handlers that are registered in
     // `localStorage`.
     dispatch: function(event) {
       this.storeEventForOtherActiveEventHandlers(event);
@@ -363,8 +360,7 @@ if (typeof DEV_MODE === 'undefined') {
   // Composition Root
   // ----------------
 
-  // Creates a new event hub and transport. Returns public methods of the event
-  // hub.
+  // Returns a new StorageMessenger instance.
   var create = function() {
     var transport = Object.create(transportProto);
     var eventHub = Object.create(eventHubProto);
@@ -375,7 +371,7 @@ if (typeof DEV_MODE === 'undefined') {
     transport.ownTargetId = guid();
     transport.eventHandler = eventHub.handleEvent.bind(eventHub);
 
-    // Bind and reassign DOM event handlers, so that they have correct receiver
+    // Bind and reassign DOM event handlers, so that they have correct receivers
     // and can be removed after being added.
     transport.handleStorageEvent = transport.handleStorageEvent.bind(transport);
     transport.handleUnloadEvent = transport.handleUnloadEvent.bind(transport);
@@ -398,15 +394,17 @@ if (typeof DEV_MODE === 'undefined') {
   // Public API and Exports
   // ----------------------
 
-  // Expose public methods.
+  // Expose public members on top-level namespace object.
   StorageMessenger.create = create;
   StorageMessenger.noConflict = noConflict;
   StorageMessenger.VERSION = VERSION;
 
-  if (DEV_MODE) {
-    StorageMessenger.eventHubProto = eventHubProto;
-    StorageMessenger.transportProto = transportProto;
-  }
+  // @exclude
+  // Expose private parts that are relevant to unit test. Will be excluded by
+  // preprocessor.
+  StorageMessenger.eventHubProto = eventHubProto;
+  StorageMessenger.transportProto = transportProto;
+  // @endexclude
 
   // Export StorageMessenger on global object.
   window.StorageMessenger = StorageMessenger;
