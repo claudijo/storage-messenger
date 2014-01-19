@@ -360,7 +360,8 @@
   // Composition Root
   // ----------------
 
-  // Returns a new StorageMessenger instance.
+  // Creates an eventHub and a transport. Return object with the public methods
+  // of the eventHub.
   var create = function() {
     var transport = Object.create(transportProto);
     var eventHub = Object.create(eventHubProto);
