@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/claudijo/storage-messenger.png?branch=master)](https://travis-ci.org/claudijo/storage-messenger) [![Code Climate](https://codeclimate.com/github/claudijo/storage-messenger.png)](https://codeclimate.com/github/claudijo/storage-messenger) [![Dependency Status](https://gemnasium.com/claudijo/storage-messenger.png)](https://gemnasium.com/claudijo/storage-messenger)
+[![Build Status](https://travis-ci.org/claudijo/storage-messenger.png?branch=master)](https://travis-ci.org/claudijo/storage-messenger) [![Code Climate](https://codeclimate.com/github/claudijo/storage-messenger.png)](https://codeclimate.com/github/claudijo/storage-messenger)
 StorageMessenger.js
 ===================
 StorageMessenger.js is a JavaScript micro-library that utilizes W3C Web Storage (localStorage) as a transport mechanism for message passing between browser windows with content loaded from the same domain.
