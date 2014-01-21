@@ -417,6 +417,7 @@
   // preprocessor.
   StorageMessenger.eventHubProto = eventHubProto;
   StorageMessenger.transportProto = transportProto;
+  StorageMessenger.guid = guid;
   // @endexclude
 
   // Export StorageMessenger to global object.
