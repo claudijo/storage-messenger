@@ -39,6 +39,12 @@ module.exports = function(grunt) {
         }]
       }
     },
+    preprocess: {
+      js: {
+        src: '<%= pkg.name %>.js',
+        dest: '<%= pkg.name %>.js'
+      }
+    },
     karma: {
       unit: {
         configFile: 'test/unit/config/karma.conf.js'
@@ -49,6 +55,14 @@ module.exports = function(grunt) {
         singleRun: true,
         browsers: ['PhantomJS']
       }
+    },
+    docco: {
+      debug: {
+        src: ['<%= pkg.name %>.js'],
+        options: {
+          output: 'doc/'
+        }
+      }
     }
   });
 
@@ -57,8 +71,17 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-text-replace');
+  grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-docco');
 
   // Default tasks.
-  grunt.registerTask('default', ['concat', 'replace', 'jshint', 'uglify']);
+  grunt.registerTask('default', [
+    'concat',
+    'replace',
+    'jshint',
+    'preprocess',
+    'docco',
+    'uglify'
+  ]);
 };
