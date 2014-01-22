@@ -30,11 +30,11 @@ module.exports = function(config) {
 
     coverageReporter: {
       type : 'html',
-      dir : 'test/unit/coverage/'
+      dir : 'coverage/'
     },
 
     preprocessors: {
-      'src/**/*.js': ['coverage']
+      'src/**/!(*.polyfill).js': ['coverage']
     },
 
     // web server port
