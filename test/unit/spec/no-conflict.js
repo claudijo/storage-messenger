@@ -13,6 +13,6 @@ describe('noConflict', function() {
   });
 
   it('should return StorageMessenger', function() {
-    expect(StorageMessenger.noConflict()).to.be(globalStorageMessenger)
+    expect(StorageMessenger.noConflict()).to.be(globalStorageMessenger);
   });
 });
