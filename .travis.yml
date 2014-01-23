@@ -4,5 +4,5 @@ node_js:
 after_success: ./update-gh-pages.sh
 env:
   global:
-    - GH-REF: github.com/claudijo/storage-messenger.git
+    - GH_REF: github.com/claudijo/storage-messenger.git
     - GH_TOKEN: MfG10xN5RPxn+K8ic3+8qsJFI6qJS5Xo4KgYsGiOK1d4fjnV9gcxuz/EdW/FnaRbsZyAs8MqpYTIRvR+nOf4TDErIi5e6WkAEjTfGWG9ViNdShPuZI5epy3Rdn+CTvj0qa0bKG9bMCYSgdNHhPgjY2mXv+YknacYvCHadP/SrW0=

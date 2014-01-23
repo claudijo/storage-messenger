@@ -1,5 +1,5 @@
 #!/bin/bash
-#if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   echo -e "Starting to update gh-pages\n"
 
   #copy data we're interested in to other place
@@ -23,4 +23,4 @@
   git push -fq origin gh-pages > /dev/null
 
   echo -e "Done magic with coverage\n"
-#fi
+fi
