@@ -69,3 +69,7 @@ StorageMessenger.js is 100% event driven, and does not rely on polling localStor
 On frequent event passing with many browser windows opened, a substantial amount of data will be flushed through localStorage. A high number of already present items in localStorage will have negative impact on performance.
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/claudijo/storage-messenger/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
