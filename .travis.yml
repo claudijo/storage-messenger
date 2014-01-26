@@ -3,7 +3,7 @@ node_js:
  - "0.10"
 before_script:
  - npm install -g grunt-cli
-after_success: ./update-gh-pages.sh
+after_success: ./bin/update-gh-pages.sh
 env:
   global:
     - GH_REF: github.com/claudijo/storage-messenger.git
