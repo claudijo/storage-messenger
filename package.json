@@ -39,6 +39,6 @@
     "semver": "~2.2.1"
   },
   "scripts": {
-    "test": "grunt:validate-and-test-src"
+    "test": "grunt validate-and-test-src"
   }
 }
