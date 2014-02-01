@@ -86,10 +86,7 @@ module.exports = function(grunt) {
       },
       gitpull: {
         command: 'git pull'
-      }/*,
-      requireCleanWorkingTree: {
-        command: 'bin/require-clean-working-tree.sh'
-      }*/
+      }
     },
 
     checkrepo: {
