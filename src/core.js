@@ -372,9 +372,9 @@
   // Composition Root
   // ----------------
 
-  // Creates an eventHub and a transport. Wires up collaborators. Return object
-  // with the public methods of the eventHub.
-  var create = function() {
+  // Creates an eventHub and a transport. Wires up collaborators and return the
+  // public methods of the eventHub.
+  var createEventHub = function() {
     var transport = Object.create(transportProto);
     var eventHub = Object.create(eventHubProto);
 
@@ -413,7 +413,7 @@
   StorageMessenger.VERSION = VERSION;
 
   // @exclude
-  // Expose private parts that are relevant to unit test. Will be excluded by
+  // Expose private parts that are relevant to unit testing. Will be excluded by
   // preprocessor.
   StorageMessenger.eventHubProto = eventHubProto;
   StorageMessenger.transportProto = transportProto;
