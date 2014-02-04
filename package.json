@@ -36,9 +36,10 @@
     "karma-mocha": "~0.1.1",
     "karma-coverage": "~0.1.4",
     "docco": "~0.6.2",
-    "semver": "~2.2.1"
+    "semver": "~2.2.1",
+    "wd": "~0.2.10"
   },
   "scripts": {
-    "test": "grunt validate-and-test-src"
+    "test": "node test/integration/basic-example"
   }
 }
