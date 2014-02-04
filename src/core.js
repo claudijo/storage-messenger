@@ -1,6 +1,6 @@
 //      StorageMessenger.js is a JavaScript micro-library that utilizes W3C Web
 //      Storage (localStorage) as a transport mechanism for message passing
-//      between browser windows with content loaded from the same domain.
+//      between browser windows that have content loaded from the same domain.
 //      (c) 2013-2014 Claudijo Borovic <claudijo.borovic@gmail.com>
 //      StorageMessenger.js may be freely distributed under the The MIT License.
 
