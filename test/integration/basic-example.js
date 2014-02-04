@@ -4,8 +4,8 @@ var webdriver = require('wd')
 var browser = webdriver.remote(
     "ondemand.saucelabs.com"
     , 80
-    , "claudijo"
-    , "b202fc1f-6992-4744-8c3a-2287362cda35"
+    , process.env['SAUCE_USERNAME']
+    , process.env['SAUCE_ACCESS_KEY']
 );
 
 browser.on('status', function(info){
