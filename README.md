@@ -22,7 +22,8 @@ var eventHub = StorageMessenger.createEventHub();
 // Trigger event in one browser window, optionally passing params.
 eventHub.trigger(event, [params]);
 
-// Listen for specified event coming from another browser window. Callback will be invoked with passed params.
+// Listen for specified event coming from another browser window. Callback will
+// be invoked with passed params.
 eventHub.on(event, callback);
 
 // Ignore specified event coming from another browser window.
