@@ -408,7 +408,7 @@
   // ----------------------
 
   // Expose public members on top-level namespace object.
-  StorageMessenger.create = create;
+  StorageMessenger.createEventHub = createEventHub;
   StorageMessenger.noConflict = noConflict;
   StorageMessenger.VERSION = VERSION;
 
