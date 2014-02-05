@@ -41,6 +41,6 @@
     "grunt-contrib-connect": "~0.6.0"
   },
   "scripts": {
-    "test": "node test/integration/basic-example"
+    "test": "grunt:validate-and-test-src"
   }
 }

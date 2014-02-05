@@ -86,6 +86,9 @@ module.exports = function(grunt) {
       },
       gitpull: {
         command: 'git pull'
+      },
+      test: {
+        command: 'node test/integration/basic-example'
       }
     },
 
@@ -193,9 +196,9 @@ module.exports = function(grunt) {
   // Lint and test source files. This task is run by npm test, ie. the default
   // action for Travic-CI.
   grunt.registerTask('validate-and-test-src', [
-//    'integration-test',
     'jshint:beforeConcat',
-    'unit-test'
+    'unit-test',
+    'integration-test'
   ]);
 
   grunt.registerTask('unit-test', [
@@ -203,12 +206,13 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('integration-test', [
-    'connect:server'
+    'connect:server',
+     'shell:test'
   ]);
 
   grunt.registerTask('bump-version', [
     'prompt:version',
-     'update-version'
+    'update-version'
   ]);
 
   grunt.registerTask('update-pkg-version-and-confirm', '', function() {
