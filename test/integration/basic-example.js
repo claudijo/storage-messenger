@@ -7,8 +7,7 @@ var browser = webdriver.remote({
   port: 4445,
   user: process.env.SAUCE_USERNAME,
   pwd: process.env.SAUCE_ACCESS_KEY,
-  path: '/wd/hub',
-  'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
+  path: '/wd/hub'
 });
 
 browser.on('status', function(info){
@@ -24,8 +23,8 @@ var desired = {
   version: '26',
   platform: 'Mac 10.6',
   tags: ["examples"],
-  name: "This is an example test"
-
+  name: "This is an example test",
+  'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
 };
 
 browser.init(desired, function() {
