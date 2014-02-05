@@ -37,7 +37,8 @@
     "karma-coverage": "~0.1.4",
     "docco": "~0.6.2",
     "semver": "~2.2.1",
-    "wd": "~0.2.10"
+    "wd": "~0.2.10",
+    "grunt-contrib-connect": "~0.6.0"
   },
   "scripts": {
     "test": "node test/integration/basic-example"

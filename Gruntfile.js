@@ -97,11 +97,9 @@ module.exports = function(grunt) {
 
     bump: {
       options: {
-
         commit: false,
         push: false,
         createTag: false,
-
         updateConfigs: ['pkg'],
         commitFiles: ['-a'] // Commit all files.
       }
@@ -165,9 +163,16 @@ module.exports = function(grunt) {
             }
           ]
         }
-      },
+      }
+    },
 
-
+    connect: {
+      server: {
+        options: {
+          port: 9001,
+          base: './'
+        }
+      }
     }
   });
 
@@ -176,6 +181,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-text-replace');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-preprocess');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-bump');
@@ -187,13 +193,17 @@ module.exports = function(grunt) {
   // Lint and test source files. This task is run by npm test, ie. the default
   // action for Travic-CI.
   grunt.registerTask('validate-and-test-src', [
+//    'integration-test',
     'jshint:beforeConcat',
-    'test'
+    'unit-test'
   ]);
 
-  // Run unit (and eventually integration) tests
-  grunt.registerTask('test', [
+  grunt.registerTask('unit-test', [
     'karma:coverage'
+  ]);
+
+  grunt.registerTask('integration-test', [
+    'connect:server'
   ]);
 
   grunt.registerTask('bump-version', [
