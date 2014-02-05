@@ -4,7 +4,8 @@ node_js:
 before_script:
  - npm install -g grunt-cli
  - ./bin/sauce-connect-setup.sh
-after_success: ./bin/update-gh-pages.sh
+after_success:
+  - ./bin/update-gh-pages.sh
 env:
   global:
     # GH pages
