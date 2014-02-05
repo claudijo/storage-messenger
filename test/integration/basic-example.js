@@ -1,11 +1,12 @@
-var webdriver = require('wd')
-    , assert = require('assert');
+/* jshint -W061 */
+var webdriver = require('wd');
+var assert = require('assert');
 
 var browser = webdriver.remote(
-    "ondemand.saucelabs.com"
-    , 80
-    , process.env['SAUCE_USERNAME']
-    , process.env['SAUCE_ACCESS_KEY']
+    "ondemand.saucelabs.com",
+    80,
+    process.env.SAUCE_USERNAME,
+    process.env.SAUCE_ACCESS_KEY
 );
 
 browser.on('status', function(info){
@@ -17,12 +18,12 @@ browser.on('command', function(meth, path){
 });
 
 var desired = {
-  browserName: 'iphone'
-  , version: '5.0'
-  , platform: 'Mac 10.6'
-  , tags: ["examples"]
-  , name: "This is an example test"
-}
+  browserName: 'iphone',
+  version: '5.0',
+  platform: 'Mac 10.6',
+  tags: ["examples"],
+  name: "This is an example test"
+};
 
 browser.init(desired, function() {
   browser.get("http://saucelabs.com/test/guinea-pig", function() {
@@ -32,10 +33,10 @@ browser.init(desired, function() {
         browser.clickElement(el, function() {
           browser.eval("window.location.href", function(err, href) {
             assert.ok(~href.indexOf('guinea'), 'Wrong URL!');
-            browser.quit()
-          })
-        })
-      })
-    })
-  })
+            browser.quit();
+          });
+        });
+      });
+    });
+  });
 });
