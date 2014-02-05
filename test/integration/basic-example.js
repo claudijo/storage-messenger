@@ -8,6 +8,8 @@ var browser = webdriver.remote(
     , process.env['SAUCE_ACCESS_KEY']
 );
 
+console.log('USER_NAME: ' +process.env['SAUCE_USERNAME'] );
+
 browser.on('status', function(info){
   console.log('\x1b[36m%s\x1b[0m', info);
 });
