@@ -3,10 +3,13 @@ node_js:
  - "0.10"
 before_script:
  - npm install -g grunt-cli
+ # - ./bin/sauce-connect-setup.sh
 after_success: ./bin/update-gh-pages.sh
 env:
   global:
+    # GH pages
     - GH_REF: github.com/claudijo/storage-messenger.git
     - secure: MfG10xN5RPxn+K8ic3+8qsJFI6qJS5Xo4KgYsGiOK1d4fjnV9gcxuz/EdW/FnaRbsZyAs8MqpYTIRvR+nOf4TDErIi5e6WkAEjTfGWG9ViNdShPuZI5epy3Rdn+CTvj0qa0bKG9bMCYSgdNHhPgjY2mXv+YknacYvCHadP/SrW0=
-    - secure: Ck60td43FE+vwhI2dl1cVpr4d3ACR3dm+ZHqCaj5E/8p7cOK7DHh+ctnbQ1EH4jcy5s4ROEQL8F0VPERYA+Ot5fYJiMbf7eEUXpgIxt2v+gGmFHGTsJIf668/2HqFtLExkrZzPEkr4WObpcNEnX4wW9QXuQxJmpp5IhTvA/u40E=
-    - secure: PlQp4NhqN5gw76Z0r5rU1hiMUD0eGcur6cjv+fzmko2hZ7Tbc/oxhKTKzSx7PRvU9e5icZ0WmypVZq7zWsBSFJrgtcB6d/UuX/1HL4poMxJjRFxl7vQ/TXP/YpLXDlJbJDsAss83/7jAmCNX5OZQXr8upXx+/p3o4Us/6jtgA/o=
+    # Sauce Labs
+    - SAUCE_USERNAME: claudijo
+    - secure: Za+/e0T5PJfvX3bj+MJ62OzJ6hJ6rmyl7he16UhLeoiOJ3C/6F+Xcyqdpk5NoxpW+hrjEi5ZD+6RvZ5FlN0tWcv6nlZW3vIgp4HxFhGZyBPfWXZ8PXf2xl/c3sk7/495GQrv0qmrp2BNiQllnAWsqGE4PZTs4gVxSEo79BS1NgA=
