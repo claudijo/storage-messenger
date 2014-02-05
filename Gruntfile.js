@@ -89,6 +89,9 @@ module.exports = function(grunt) {
       },
       test: {
         command: 'node test/integration/basic-example'
+      },
+      'report-test-success': {
+        command: 'curl -H "Content-Type:text/json" -s -X PUT -d \'{"passed": true}\' http://' + process.env.SAUCE_USERNAME + ':' + process.env.SAUCE_ACCESS_KEY + '@saucelabs.com/rest/v1/claudijo/jobs/' + process.env.TRAVIS_JOB_NUMBER
       }
     },
 
@@ -207,7 +210,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('integration-test', [
     'connect:server',
-     'shell:test'
+     'shell:test',
+     'shell:report-test-success'
   ]);
 
   grunt.registerTask('bump-version', [
