@@ -3,7 +3,7 @@ var webdriver = require('wd');
 var assert = require('assert');
 
 var browser = webdriver.remote({
-  hostname: 'localhost',
+  hostname: '127.0.0.1',
   port: 4445,
   user: process.env.SAUCE_USERNAME,
   pwd: process.env.SAUCE_ACCESS_KEY,
@@ -24,7 +24,8 @@ var desired = {
   platform: 'Mac 10.6',
   tags: ["examples"],
   name: "This is an example test",
-  'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
+  'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
+  build: process.env.TRAVIS_JOB_ID
 };
 
 browser.init(desired, function() {
