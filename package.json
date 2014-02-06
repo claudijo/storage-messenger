@@ -38,7 +38,8 @@
     "docco": "~0.6.2",
     "semver": "~2.2.1",
     "wd": "~0.2.10",
-    "grunt-contrib-connect": "~0.6.0"
+    "grunt-contrib-connect": "~0.6.0",
+    "grunt-http": "~1.0.1"
   },
   "scripts": {
     "test": "grunt validate-and-test-src"

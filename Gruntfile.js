@@ -89,9 +89,6 @@ module.exports = function(grunt) {
       },
       test: {
         command: 'node test/integration/basic-example'
-      },
-      'report-test-success': {
-        command: 'curl -H "Content-Type:text/json" -s -X PUT -d \'{"passed": true}\' http://' + process.env.SAUCE_USERNAME + ':' + process.env.SAUCE_ACCESS_KEY + '@saucelabs.com/rest/v1/claudijo/jobs/' + process.env.TRAVIS_JOB_NUMBER
       }
     },
 
@@ -179,6 +176,22 @@ module.exports = function(grunt) {
           base: './'
         }
       }
+    },
+
+    http: {
+      reportSauceLabsSuccess: {
+        options: {
+          url: 'saucelabs.com/rest/v1/' + process.env.SAUCE_USERNAME + '/jobs/' + process.env.TRAVIS_JOB_NUMBER,
+          method: 'PUT',
+          json: {
+            passed: true
+          },
+          auth: {
+            user: process.env.SAUCE_USERNAME,
+            pass: process.env.SAUCE_ACCESS_KEY
+          }
+        }
+      }
     }
   });
 
@@ -195,6 +208,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-prompt');
+  grunt.loadNpmTasks('grunt-http');
 
   // Lint and test source files. This task is run by npm test, ie. the default
   // action for Travic-CI.
@@ -211,7 +225,7 @@ module.exports = function(grunt) {
   grunt.registerTask('integration-test', [
     'connect:server',
      'shell:test',
-     'shell:report-test-success'
+     'http:reportSauceLabsSuccess'
   ]);
 
   grunt.registerTask('bump-version', [
