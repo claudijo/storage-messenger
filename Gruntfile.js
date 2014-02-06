@@ -181,7 +181,7 @@ module.exports = function(grunt) {
     http: {
       reportSauceLabsSuccess: {
         options: {
-          url: 'saucelabs.com/rest/v1/' + process.env.SAUCE_USERNAME + '/jobs/' + process.env.TRAVIS_JOB_NUMBER,
+          url: 'saucelabs.com/rest/v1/' + process.env.SAUCE_USERNAME + '/jobs/' + process.env.SAUCE_JOB_ID,
           method: 'PUT',
           json: {
             passed: true
