@@ -19,7 +19,14 @@ describe('mocha spec examples', function() {
     var browser;
 
     before(function() {
-      browser = wd.promiseChainRemote();
+      browser = wd.promiseChainRemote({
+        hostname: '127.0.0.1',
+        port: 4445,
+        user: process.env.SAUCE_USERNAME,
+        pwd: process.env.SAUCE_ACCESS_KEY,
+        path: '/wd/hub'
+      });
+
       //browser._debugPromise();
       browser.on('status', function(info) {
         console.log(info);
@@ -28,7 +35,10 @@ describe('mocha spec examples', function() {
         console.log(' > ' + meth, path, data || '');
       });
       return browser
-          .init({browserName:'chrome'});
+          .init({
+            browserName:'chrome',
+            'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
+          });
     });
 
     beforeEach(function() {
