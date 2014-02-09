@@ -88,7 +88,7 @@ module.exports = function(grunt) {
         command: 'git pull'
       },
       test: {
-        command: 'node test/integration/spec/shoutbox'
+        command: 'node_modules/mocha/bin/mocha test/integration/spec/shoutbox.js'
       }
     },
 
