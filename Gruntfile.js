@@ -88,7 +88,7 @@ module.exports = function(grunt) {
         command: 'git pull'
       },
       test: {
-        command: 'node test/integration/basic-example'
+        command: 'node test/integration/spec/shoutbox'
       }
     },
 
