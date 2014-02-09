@@ -17,6 +17,7 @@ describe('mocha spec examples', function() {
   // using mocha-as-promised and chai-as-promised is the best way
   describe("using mocha-as-promised and chai-as-promised", function() {
     var browser;
+    var allPassed = true;
 
     before(function() {
       browser = wd.promiseChainRemote({
@@ -38,7 +39,9 @@ describe('mocha spec examples', function() {
 
       return browser.init({
         browserName:'chrome',
-        'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
+        tags: ["examples"],
+        'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
+        build: process.env.TRAVIS_JOB_ID
       });
     });
 
@@ -46,14 +49,19 @@ describe('mocha spec examples', function() {
       return browser.get('http://localhost:9001/test/integration/data/shoutbox.html');
     });
 
+    afterEach(function() {
+      allPassed = allPassed && (this.currentTest.state === 'passed');
+    });
+
     after(function() {
-      console.log('Quitting....', browser.sessionId);
-      return browser.quit();
+      return browser
+          .quit().then(function() {
+            return(browser.sauceJobStatus(allPassed));
+          });
     });
 
     it("should retrieve the page title", function() {
-      return browser
-          .title().should.become("Storage Messenger Shoutbox");
+      return browser.title().should.become("Storage Messenger Shoutbox");
     });
   });
 

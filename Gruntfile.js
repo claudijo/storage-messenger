@@ -87,6 +87,9 @@ module.exports = function(grunt) {
       gitpull: {
         command: 'git pull'
       },
+      sauceConnectSetup: {
+        command: './bin/sauce-connect-setup.sh'
+      },
       test: {
         command: 'node_modules/mocha/bin/mocha test/integration/spec/shoutbox.js'
       }
@@ -215,9 +218,10 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('integration-test', [
+//    'shell:sauceConnectSetup',
     'connect:server',
-    'shell:test',
-    'http:reportSauceLabsSuccess'
+    'shell:test'
+//    'http:reportSauceLabsSuccess'
   ]);
 
   grunt.registerTask('bump-version', [
