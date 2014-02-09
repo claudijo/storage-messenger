@@ -195,20 +195,12 @@ module.exports = function(grunt) {
     }
   });
 
-  // Load the task plugins
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-text-replace');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-preprocess');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-bump');
-  grunt.loadNpmTasks('grunt-checkrepo');
-  grunt.loadNpmTasks('grunt-shell');
-  grunt.loadNpmTasks('grunt-bump');
-  grunt.loadNpmTasks('grunt-prompt');
-  grunt.loadNpmTasks('grunt-http');
+  // Load all grunt task plugins
+  for (var key in grunt.file.readJSON('package.json').devDependencies) {
+    if (/^grunt.+/.test(key)) {
+      grunt.loadNpmTasks(key);
+    }
+  }
 
   // Lint and test source files. This task is run by npm test, ie. the default
   // action for Travic-CI.
@@ -224,8 +216,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('integration-test', [
     'connect:server',
-     'shell:test',
-     'http:reportSauceLabsSuccess'
+    'shell:test',
+    'http:reportSauceLabsSuccess'
   ]);
 
   grunt.registerTask('bump-version', [
