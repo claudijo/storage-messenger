@@ -28,7 +28,6 @@ describe('mocha spec examples', function() {
         path: '/wd/hub'
       });
 
-      //browser._debugPromise();
       browser.on('status', function(info) {
         console.log(info);
       });
