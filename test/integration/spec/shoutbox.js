@@ -31,14 +31,15 @@ describe('mocha spec examples', function() {
       browser.on('status', function(info) {
         console.log(info);
       });
+
       browser.on('command', function(meth, path, data) {
         console.log(' > ' + meth, path, data || '');
       });
-      return browser
-          .init({
-            browserName:'chrome',
-            'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
-          });
+
+      return browser.init({
+        browserName:'chrome',
+        'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER
+      });
     });
 
     beforeEach(function() {
@@ -46,8 +47,8 @@ describe('mocha spec examples', function() {
     });
 
     after(function() {
-      return browser
-          .quit();
+      console.log('Quitting....', browser.sessionId);
+      return browser.quit();
     });
 
     it("should retrieve the page title", function() {
