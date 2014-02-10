@@ -87,9 +87,6 @@ module.exports = function(grunt) {
       gitpull: {
         command: 'git pull'
       },
-      sauceConnectSetup: {
-        command: './bin/sauce-connect-setup.sh'
-      },
       test: {
         command: 'node_modules/mocha/bin/mocha test/integration/spec/shoutbox.js'
       }
@@ -179,22 +176,6 @@ module.exports = function(grunt) {
           base: './'
         }
       }
-    },
-
-    http: {
-      reportSauceLabsSuccess: {
-        options: {
-          url: 'saucelabs.com/rest/v1/' + process.env.SAUCE_USERNAME + '/jobs/' + process.env.SAUCE_JOB_ID,
-          method: 'PUT',
-          json: {
-            passed: true
-          },
-          auth: {
-            user: process.env.SAUCE_USERNAME,
-            pass: process.env.SAUCE_ACCESS_KEY
-          }
-        }
-      }
     }
   });
 
@@ -218,10 +199,8 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('integration-test', [
-//    'shell:sauceConnectSetup',
     'connect:server',
     'shell:test'
-//    'http:reportSauceLabsSuccess'
   ]);
 
   grunt.registerTask('bump-version', [
