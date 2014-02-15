@@ -1,5 +1,5 @@
 // Helper to open window, since driver.openWindow() is not implemented in
-// WebDriverJS 2.37.0
+// WebDriverJS as of this writing.
 exports.openWindow = function(driver, url, name) {
   name = name || '';
 
