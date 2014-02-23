@@ -189,7 +189,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('integration-test', function(browsers) {
     if (browsers) {
-      process.env.SELENIUM_BROWSER = browsers
+      process.env.SELENIUM_BROWSER = browsers;
     }
     grunt.task.run('shell:integrationTest');
   });

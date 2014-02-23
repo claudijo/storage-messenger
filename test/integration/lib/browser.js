@@ -12,7 +12,7 @@ Browser = {
   OPERA: 'opera',
   PHANTOMJS: 'phantomjs',
   SAFARI: 'safari'
-}
+};
 
 var browsersToTest = (function() {
   var browsers = [];
