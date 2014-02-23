@@ -7,8 +7,9 @@ module.exports = {
 
   browsersToTest: [
     {
-      browserName: 'Chrome',
-      platform: 'Windows 2012'
+      browserName: 'firefox',
+      platform: 'OS X 10.6',
+      version: '25'
     }
   ]
 };
