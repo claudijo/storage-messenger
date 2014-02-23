@@ -2,8 +2,6 @@ var semver = require('semver');
 var currentVersion = require('./package.json').version;
 
 module.exports = function(grunt) {
-
-  // Project configuration
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -70,7 +68,7 @@ module.exports = function(grunt) {
       coverage: {
         configFile: 'test/unit/config/karma.conf.js',
         singleRun: true,
-        reporters: ['coverage'],
+        reporters: ['coverage', 'progress'],
         browsers: ['PhantomJS']
       }
     },
@@ -87,8 +85,8 @@ module.exports = function(grunt) {
       gitpull: {
         command: 'git pull'
       },
-      test: {
-        command: 'node_modules/mocha/bin/mocha test/integration/spec/shoutbox.js'
+      integrationTest: {
+        command: 'node_modules/mocha/bin/mocha -R list --recursive test/integration/spec/shoutbox'
       }
     },
 
@@ -167,15 +165,6 @@ module.exports = function(grunt) {
           ]
         }
       }
-    },
-
-    connect: {
-      server: {
-        options: {
-          port: 9001,
-          base: './'
-        }
-      }
     }
   });
 
@@ -198,10 +187,12 @@ module.exports = function(grunt) {
     'karma:coverage'
   ]);
 
-  grunt.registerTask('integration-test', [
-    'connect:server',
-    'shell:test'
-  ]);
+  grunt.registerTask('integration-test', function(browsers) {
+    if (browsers) {
+      process.env.SELENIUM_BROWSER = browsers
+    }
+    grunt.task.run('shell:integrationTest');
+  });
 
   grunt.registerTask('bump-version', [
     'prompt:version',

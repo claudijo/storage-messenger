@@ -1,67 +1,131 @@
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
-var wd = require('wd');
+var assert = require('assert');
+var test = require('../lib/testing');
+var Pages = require('../lib/testing').Pages;
+var seleniumUtils = require('../selenium-webdriver-utils');
+var shoutbox = require('../spec-helper');
 
-require("mocha-as-promised")();
-require('colors');
+test.suite(function(env) {
+  var driver;
 
-chai.use(chaiAsPromised);
-chai.should();
+  beforeEach(function() {
+    driver = env.driver;
+    driver.get(Pages.shoutbox);
+  });
 
-// enables chai assertion chaining
-chaiAsPromised.transferPromiseness = wd.transferPromiseness;
-
-describe('mocha spec examples', function() {
-  this.timeout(10000);
-
-  // using mocha-as-promised and chai-as-promised is the best way
-  describe("using mocha-as-promised and chai-as-promised", function() {
-    var browser;
-    var allPassed = true;
-
-    before(function() {
-      browser = wd.promiseChainRemote({
-        hostname: '127.0.0.1',
-        port: 4445,
-        user: process.env.SAUCE_USERNAME,
-        pwd: process.env.SAUCE_ACCESS_KEY,
-        path: '/wd/hub'
-      });
-
-      browser.on('status', function(info) {
-        console.log(info);
-      });
-
-      browser.on('command', function(meth, path, data) {
-        console.log(' > ' + meth, path, data || '');
-      });
-
-      return browser.init({
-        browserName:'chrome',
-        tags: ["examples"],
-        'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
-        build: process.env.TRAVIS_JOB_ID
+  describe('Single browser window', function() {
+    test.it('should have correct items in storage', function() {
+      seleniumUtils.getLocalStorageSize(driver).then(function(size) {
+        assert.equal(size, 1);
       });
     });
 
-    beforeEach(function() {
-      return browser.get('http://localhost:9001/test/integration/data/shoutbox.html');
+    test.it('should have correct number of items in storage after sending ' +
+        'message without any other windows open', function() {
+      shoutbox.sendMessage(driver, 'hey');
+      seleniumUtils.getLocalStorageSize(driver).then(function(size) {
+        assert.equal(size, 1);
+      });
     });
 
-    afterEach(function() {
-      allPassed = allPassed && (this.currentTest.state === 'passed');
+    test.it('should have correct items in storage after refreshing window',
+        function() {
+      driver.navigate().refresh();
+      seleniumUtils.getLocalStorageSize(driver).then(function(size) {
+        assert.equal(size, 1);
+      });
     });
 
-    after(function() {
-      return browser
-          .quit().then(function() {
-            return(browser.sauceJobStatus(allPassed));
-          });
+    test.it('should have correct items in storage after browsing to ' +
+        'any page and going back', function() {
+      driver.get(Pages.empty);
+      driver.get(Pages.shoutbox);
+      seleniumUtils.getLocalStorageSize(driver).then(function(size) {
+        assert.equal(size, 1);
+      });
     });
 
-    it("should retrieve the page title", function() {
-      return browser.title().should.become("Storage Messenger Shoutbox");
+    test.it('should have correct items in storage after closing browser, ' +
+        'then opening it again', function() {
+      driver = env.refreshDriver();
+      driver.get(Pages.shoutbox);
+      seleniumUtils.getLocalStorageSize(driver).then(function(size) {
+        assert.equal(size, 1);
+      });
     });
   });
 
+  describe('Two browser windows', function() {
+    var mainWindowHandle;
+
+    var closeAllSecondaryWindows = function() {
+      driver.getAllWindowHandles().then(function(windowHandles) {
+        windowHandles.forEach(function(windowHandle) {
+          if(windowHandle !== mainWindowHandle) {
+            driver.switchTo().window(windowHandle);
+            driver.close();
+          }
+        });
+      });
+      driver.switchTo().window(mainWindowHandle);
+    };
+
+    beforeEach(function() {
+      driver.getWindowHandle().then(function(windowHandle) {
+        mainWindowHandle = windowHandle;
+      });
+
+      seleniumUtils.openWindow(driver, driver.getCurrentUrl(), 'receiver');
+    });
+
+    afterEach(function() {
+      closeAllSecondaryWindows();
+    });
+
+    test.it('should have correct items in local storage after opening ' +
+        'second window', function() {
+      driver.switchTo().window('receiver');
+      seleniumUtils.getLocalStorageSize(driver).then(function(size) {
+        assert.equal(size, 2);
+      });
+    });
+
+    test.it('should have correct items in local storage after sending ' +
+        'message with second window open', function() {
+      shoutbox.sendMessage(driver, 'hey');
+      driver.switchTo().window('receiver');
+      seleniumUtils.getLocalStorageSize(driver).then(function(size) {
+        assert.equal(size, 2);
+      });
+    });
+
+    test.it('should have correct number of items in local storage after ' +
+        'closing second window', function() {
+      driver.switchTo().window('receiver');
+      driver.close();
+      driver.switchTo().window(mainWindowHandle);
+      seleniumUtils.getLocalStorageSize(driver).then(function(size) {
+        assert.equal(size, 1);
+      });
+    });
+
+    test.it('should be able to receive message sent from main window to ' +
+        'second window', function() {
+      shoutbox.sendMessage(driver, 'foo');
+      driver.switchTo().window('receiver');
+      shoutbox.getReceivedMessage(driver).then(function(receivedMessage) {
+        assert.equal(receivedMessage, 'foo');
+      });
+    });
+
+    test.it('should be able to receive consecutive messages sent from main ' +
+        'window to second window', function() {
+      shoutbox.sendMessage(driver, 'foo');
+      shoutbox.sendMessage(driver, 'bar');
+      driver.switchTo().window('receiver');
+      shoutbox.getReceivedMessage(driver).then(function(receivedMessage) {
+        assert.equal(receivedMessage, 'bar');
+      });
+    });
+  });
 });
+
