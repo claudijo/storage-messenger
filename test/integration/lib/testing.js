@@ -29,7 +29,7 @@ var TestEnvironment = function(browser, server) {
           // tests locally.
           .set(webdriver.Capability.VERSION, browser.version)
           .set(webdriver.Capability.PLATFORM, browser.platform)
-          .set('name', '[' + browser +'] StorageMessenger.js Shoutbox')
+          .set('name', '[' + name +'] StorageMessenger.js Shoutbox')
           .set('username', process.env.SAUCE_USERNAME)
           .set('accessKey', process.env.SAUCE_ACCESS_KEY)
           .set('tunnel-identifier', process.env.TRAVIS_JOB_NUMBER);
