@@ -32,7 +32,7 @@ var TestEnvironment = function(browser, server) {
           .set('name', '[' + browser +'] StorageMessenger.js Shoutbox')
           .set('username', process.env.SAUCE_USERNAME)
           .set('accessKey', process.env.SAUCE_ACCESS_KEY)
-          .set('tunnel-identifier', process.env.TRAVIS_JOB_NUMBER)
+          .set('tunnel-identifier', process.env.TRAVIS_JOB_NUMBER);
 
       builder.usingServer(server.address());
 
