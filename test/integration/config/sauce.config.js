@@ -1,7 +1,7 @@
 module.exports = {
   server: {
     address: function() {
-      return 'http://ondemand.saucelabs.com:80/wd/hub';
+      return 'http://127.0.0.1:4445/wd/hub';
     }
   },
 
