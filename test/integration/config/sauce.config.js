@@ -59,12 +59,12 @@ module.exports = {
       platform: 'OS X 10.6',
       version: '4'
     }, {
-      browserName: 'andriod',
-      platform: 'linux',
+      browserName: 'android',
+      platform: 'Linux',
       version: '4.3'
     }, {
-      browserName: 'andriod',
-      platform: 'linux',
+      browserName: 'android',
+      platform: 'Linux',
       version: '4.0'
     }
   ]
